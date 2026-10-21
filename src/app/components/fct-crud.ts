@@ -192,14 +192,11 @@ import { FCT } from '../models/tramite.models';
           <table class="min-w-full divide-y divide-slate-200 text-left text-xs bg-white">
             <thead class="bg-slate-50/90 text-slate-600 font-semibold uppercase tracking-wider text-[11px]">
               <tr>
-                <th scope="col" class="py-3 px-3.5">Empresa</th>
-                <th scope="col" class="py-3 px-3.5">Código FCT</th>
-                <th scope="col" class="py-3 px-3.5">Descripción / Nombre</th>
+                <th scope="col" class="py-3 px-3.5">CdgEm</th>
+                <th scope="col" class="py-3 px-3.5">Codigo</th>
                 <th scope="col" class="py-3 px-3.5">Tipo</th>
-                <th scope="col" class="py-3 px-3.5">CdgTpc / CdgPCr</th>
-                <th scope="col" class="py-3 px-3.5">Vigencia (Desde - Hasta)</th>
-                <th scope="col" class="py-3 px-3.5 text-center">Campos</th>
-                <th scope="col" class="py-3 px-3.5 text-center">Estado</th>
+                <th scope="col" class="py-3 px-3.5">CdgTpc</th>
+                <th scope="col" class="py-3 px-3.5">Desde</th>
                 <th scope="col" class="py-3 px-3.5 text-right">Acciones</th>
               </tr>
             </thead>
@@ -233,14 +230,6 @@ import { FCT } from '../models/tramite.models';
                     <span class="block text-[10px] text-slate-400 font-normal">PH: {{ item.CodigoPH || 'N/A' }}</span>
                   </td>
 
-                  <!-- Descripcion -->
-                  <td class="py-3 px-3.5 max-w-xs">
-                    <p class="font-medium text-slate-900 truncate" [title]="item.Descripcion">
-                      {{ item.Descripcion }}
-                    </p>
-                    <span class="text-[10px] text-slate-500">Creado: {{ item.Creacion }} (Período: {{ item.CdgPe }})</span>
-                  </td>
-
                   <!-- Tipo -->
                   <td class="py-3 px-3.5 whitespace-nowrap">
                     <span class="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-semibold border bg-slate-100 text-slate-800 border-slate-200">
@@ -262,33 +251,6 @@ import { FCT } from '../models/tramite.models';
                       <span class="text-slate-400">al</span>
                       <span>{{ item.Hasta }}</span>
                     </div>
-                  </td>
-
-                  <!-- Total Campos Asignados -->
-                  <td class="py-3 px-3.5 text-center whitespace-nowrap">
-                    <button
-                      (click)="selectAndNavigateCFT(item.Codigo)"
-                      title="Administrar campos CFT de este trámite"
-                      class="inline-flex items-center gap-1 px-2 py-1 rounded-lg text-xs font-semibold bg-blue-50 text-blue-700 hover:bg-blue-100 transition-colors cursor-pointer"
-                    >
-                      <mat-icon class="text-sm">layers</mat-icon>
-                      <span>{{ getCamposCount(item.Codigo) }}</span>
-                    </button>
-                  </td>
-
-                  <!-- Estado -->
-                  <td class="py-3 px-3.5 text-center whitespace-nowrap">
-                    @if (item.Estado === 'ACTIVO') {
-                      <span class="inline-flex items-center px-2 py-0.5 rounded-full text-[11px] font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200">
-                        <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 mr-1.5"></span>
-                        ACTIVO
-                      </span>
-                    } @else {
-                      <span class="inline-flex items-center px-2 py-0.5 rounded-full text-[11px] font-semibold bg-rose-50 text-rose-700 border border-rose-200">
-                        <span class="w-1.5 h-1.5 rounded-full bg-rose-500 mr-1.5"></span>
-                        INACTIVO
-                      </span>
-                    }
                   </td>
 
                   <!-- Acciones -->
@@ -316,7 +278,7 @@ import { FCT } from '../models/tramite.models';
                 </tr>
               } @empty {
                 <tr>
-                  <td colspan="9" class="py-12 text-center text-slate-400">
+                  <td colspan="6" class="py-12 text-center text-slate-400">
                     <div class="flex flex-col items-center justify-center gap-2">
                       <mat-icon class="text-4xl text-slate-300">search_off</mat-icon>
                       <p class="text-sm font-medium text-slate-600">No se encontraron trámites con los filtros especificados.</p>
@@ -389,7 +351,7 @@ import { FCT } from '../models/tramite.models';
                 <div>
                   <div class="flex items-center justify-between">
                     <label class="block text-xs font-semibold text-slate-700 mb-1">
-                      Codigo <span class="text-rose-500">*</span>
+                      Codigo
                     </label>
                     @if (isEditing()) {
                       <span class="inline-flex items-center gap-1 text-[10px] text-amber-700 bg-amber-50 px-1.5 py-0.5 rounded border border-amber-200">
@@ -414,7 +376,7 @@ import { FCT } from '../models/tramite.models';
                 <!-- CdgEm -->
                 <div>
                   <label class="block text-xs font-semibold text-slate-700 mb-1">
-                    CdgEm (Empresa) <span class="text-rose-500">*</span>
+                    CdgEm
                   </label>
                   <select
                     formControlName="CdgEm"
@@ -429,7 +391,7 @@ import { FCT } from '../models/tramite.models';
                 <!-- CdgTpc -->
                 <div>
                   <label class="block text-xs font-semibold text-slate-700 mb-1">
-                    CdgTpc <span class="text-rose-500">*</span>
+                    CdgTpc
                   </label>
                   <input
                     type="text"
@@ -442,7 +404,7 @@ import { FCT } from '../models/tramite.models';
                 <!-- CdgPCr -->
                 <div>
                   <label class="block text-xs font-semibold text-slate-700 mb-1">
-                    CdgPCr <span class="text-rose-500">*</span>
+                    CdgPCr
                   </label>
                   <input
                     type="text"
@@ -468,7 +430,7 @@ import { FCT } from '../models/tramite.models';
                 <!-- Tipo -->
                 <div>
                   <label class="block text-xs font-semibold text-slate-700 mb-1">
-                    Tipo <span class="text-rose-500">*</span>
+                    Tipo
                   </label>
                   <select
                     formControlName="Tipo"
@@ -485,7 +447,7 @@ import { FCT } from '../models/tramite.models';
                 <!-- CdgPe -->
                 <div>
                   <label class="block text-xs font-semibold text-slate-700 mb-1">
-                    CdgPe <span class="text-rose-500">*</span>
+                    CdgPe
                   </label>
                   <select
                     formControlName="CdgPe"
@@ -502,7 +464,7 @@ import { FCT } from '../models/tramite.models';
                 <!-- Creacion -->
                 <div>
                   <label class="block text-xs font-semibold text-slate-700 mb-1">
-                    Creacion <span class="text-rose-500">*</span>
+                    Creacion
                   </label>
                   <input
                     type="date"
@@ -514,7 +476,7 @@ import { FCT } from '../models/tramite.models';
                 <!-- Desde -->
                 <div>
                   <label class="block text-xs font-semibold text-slate-700 mb-1">
-                    Desde <span class="text-rose-500">*</span>
+                    Desde
                   </label>
                   <input
                     type="date"
@@ -526,7 +488,7 @@ import { FCT } from '../models/tramite.models';
                 <!-- Hasta -->
                 <div>
                   <label class="block text-xs font-semibold text-slate-700 mb-1">
-                    Hasta <span class="text-rose-500">*</span>
+                    Hasta
                   </label>
                   <input
                     type="date"
