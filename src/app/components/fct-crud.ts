@@ -201,6 +201,7 @@ import { FCT } from '../models/tramite.models';
                 <th scope="col" class="py-3 px-3.5">Creacion</th>
                 <th scope="col" class="py-3 px-3.5">CdgPe</th>
                 <th scope="col" class="py-3 px-3.5">Desde</th>
+                <th scope="col" class="py-3 px-3.5">Hasta</th>
                 <th scope="col" class="py-3 px-3.5 text-right">Acciones</th>
               </tr>
             </thead>
@@ -275,6 +276,14 @@ import { FCT } from '../models/tramite.models';
                     </div>
                   </td>
 
+                  <!-- Hasta -->
+                  <td class="py-3 px-3.5 whitespace-nowrap text-[11px] text-slate-600">
+                    <div class="flex items-center gap-1">
+                      <mat-icon class="text-xs text-slate-400">event</mat-icon>
+                      <span>{{ item.Hasta || '—' }}</span>
+                    </div>
+                  </td>
+
                   <!-- Acciones -->
                   <td class="py-3 px-3.5 text-right whitespace-nowrap">
                     <div class="flex items-center justify-end gap-1">
@@ -300,7 +309,7 @@ import { FCT } from '../models/tramite.models';
                 </tr>
               } @empty {
                 <tr>
-                  <td colspan="10" class="py-12 text-center text-slate-400">
+                  <td colspan="11" class="py-12 text-center text-slate-400">
                     <div class="flex flex-col items-center justify-center gap-2">
                       <mat-icon class="text-4xl text-slate-300">search_off</mat-icon>
                       <p class="text-sm font-medium text-slate-600">No se encontraron trámites con los filtros especificados.</p>
