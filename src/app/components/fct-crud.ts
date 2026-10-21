@@ -33,7 +33,7 @@ import { FCT } from '../models/tramite.models';
               class="inline-flex items-center gap-2 px-4 py-2 text-xs font-semibold text-slate-700 bg-white hover:bg-slate-50 border border-slate-300 rounded-xl shadow-2xs transition-colors cursor-pointer"
             >
               <mat-icon class="text-base text-slate-500">add</mat-icon>
-              <span>Crear FCT</span>
+              <span>Crear </span>
             </button>
           </div>
         </div>
@@ -349,7 +349,7 @@ import { FCT } from '../models/tramite.models';
                 </div>
                 <div>
                   <h3 class="text-base font-bold text-slate-900">
-                    {{ isEditing() ? 'Actualizar FCT' : 'Crear FCT' }}
+                    {{ isEditing() ? 'Editar ' : 'Crear ' }}
                   </h3>
                 </div>
               </div>
@@ -400,7 +400,7 @@ import { FCT } from '../models/tramite.models';
                 <!-- CdgEm -->
                 <div>
                   <label class="block text-xs font-semibold text-slate-700 mb-1">
-                    CdgEm
+                    Empresa
                   </label>
                   <select
                     formControlName="CdgEm"
@@ -709,56 +709,24 @@ import { FCT } from '../models/tramite.models';
           <div class="bg-white rounded-2xl shadow-2xl border border-slate-200 max-w-md w-full overflow-hidden animate-in fade-in zoom-in-95 duration-150">
             
             <div class="p-6">
-              <div class="w-12 h-12 rounded-2xl bg-rose-100 text-rose-600 flex items-center justify-center mx-auto mb-4">
-                <mat-icon class="text-2xl">warning_amber</mat-icon>
-              </div>
-
-              <h3 class="text-base font-bold text-slate-900 text-center">4. Gestión de Baja de FCT</h3>
+          
+              <h3 class="text-base font-bold text-slate-900 text-center">¿Está seguro de Eliminar?</h3>
               <p class="text-xs text-slate-500 text-center mt-1">
-                ¿Qué acción desea aplicar al trámite <strong class="font-mono text-slate-800">{{ item.Codigo }}</strong>?
+                ¿Qué acción desea eliminar?
               </p>
 
-              @if (getCamposCount(item.Codigo) > 0) {
-                <div class="mt-4 p-3 bg-amber-50 border border-amber-200 rounded-xl text-xs text-amber-800 flex items-start gap-2">
-                  <mat-icon class="text-amber-600 text-base mt-0.5">info</mat-icon>
-                  <div>
-                    <strong class="font-semibold">Atención:</strong>
-                    <p class="mt-0.5">Este FCT tiene <strong>{{ getCamposCount(item.Codigo) }} campos CFT</strong> asociados. Se recomienda <em>Inactivarlo</em> para preservar el historial administrativo.</p>
-                  </div>
-                </div>
-              }
-
-              <!-- 4.2 Motivo de Inactivación -->
-              <div class="mt-4">
-                <label class="block text-xs font-semibold text-slate-700 mb-1">
-                  4.2 Motivo de Inactivación / Baja
-                </label>
-                <textarea
-                  [value]="motivoInactivacionInput()"
-                  (input)="motivoInactivacionInput.set($any($event.target).value)"
-                  rows="2"
-                  placeholder="Escriba la justificación formal (ej. Resolución administrativa Nº 2026-X)..."
-                  class="w-full text-xs bg-slate-50 border border-slate-300 rounded-xl p-2.5 outline-none focus:ring-2 focus:ring-blue-500 focus:bg-white"
-                ></textarea>
-              </div>
+         
+             
 
               <div class="mt-6 flex flex-col gap-2">
-                <!-- 4.2 Confirmar Inactivación (Recomendado) -->
-                <button
-                  (click)="confirmarInactivacion(item.Codigo)"
-                  class="w-full py-2.5 text-xs font-semibold text-amber-800 bg-amber-100 hover:bg-amber-200 rounded-xl transition-colors flex items-center justify-center gap-1.5 cursor-pointer"
-                >
-                  <mat-icon class="text-base text-amber-700">block</mat-icon>
-                  <span>4.2 Confirmar Inactivación (Cambiar Estado a INACTIVO)</span>
-                </button>
-
+           
                 <!-- 4.1 Eliminar Definitivamente -->
                 <button
                   (click)="confirmarEliminacionFisica(item.Codigo)"
                   class="w-full py-2 text-xs font-semibold text-rose-600 hover:bg-rose-50 rounded-xl transition-colors flex items-center justify-center gap-1.5 cursor-pointer"
                 >
                   <mat-icon class="text-base">delete_forever</mat-icon>
-                  <span>Eliminar Definitivamente (FCT y CFTs)</span>
+                  <span>Eliminar Definitivamente )</span>
                 </button>
 
                 <button

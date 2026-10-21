@@ -63,20 +63,7 @@ import { CET, CFT } from '../models/tramite.models';
               <span>{{ selectedCETS().size }} campo(s) CET seleccionado(s) para asignar en lote.</span>
             </div>
 
-            <div class="flex items-center gap-2">
-              <button
-                (click)="clearSelection()"
-                class="px-2.5 py-1 text-xs text-slate-600 hover:text-slate-900 cursor-pointer"
-              >
-                Deseleccionar
-              </button>
-              <button
-                (click)="assignBatchToActiveFCT()"
-                class="px-3.5 py-1.5 text-xs font-bold text-white bg-indigo-600 hover:bg-indigo-700 rounded-lg shadow-sm transition-colors cursor-pointer"
-              >
-                Asignar {{ selectedCETS().size }} al trámite {{ service.selectedFCTCode() }}
-              </button>
-            </div>
+           
           </div>
         }
       </div>
@@ -88,15 +75,14 @@ import { CET, CFT } from '../models/tramite.models';
         <div class="flex items-center justify-between pb-3 border-b border-slate-100">
           <div class="flex items-center gap-2">
             <mat-icon class="text-slate-500 text-base">filter_list</mat-icon>
-            <h3 class="text-xs font-bold text-slate-800 uppercase tracking-wider">Filtros de Búsqueda de Elementos (CET)</h3>
+            <h3 class="text-xs font-bold text-slate-800 uppercase tracking-wider">Filtros de Búsqueda </h3>
           </div>
 
           <button
             (click)="limpiarFiltros()"
             class="text-xs text-slate-500 hover:text-rose-600 flex items-center gap-1 cursor-pointer transition-colors"
           >
-            <mat-icon class="text-sm">restart_alt</mat-icon>
-            <span>Restablecer Filtros</span>
+            
           </button>
         </div>
 
@@ -129,7 +115,7 @@ import { CET, CFT } from '../models/tramite.models';
 
           <!-- 3. Filtro Tipo -->
           <div>
-            <label class="block text-[11px] font-semibold text-slate-600 mb-1">Tipo de Control</label>
+            <label class="block text-[11px] font-semibold text-slate-600 mb-1">Tipo </label>
             <select
               [value]="filtroTipo()"
               (change)="filtroTipo.set($any($event.target).value)"

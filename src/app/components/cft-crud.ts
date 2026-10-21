@@ -58,7 +58,7 @@ import { CFT } from '../models/tramite.models';
               class="inline-flex items-center gap-1.5 px-3.5 py-2 text-xs font-semibold text-white bg-blue-600 hover:bg-blue-700 rounded-xl shadow-sm transition-colors cursor-pointer"
             >
               <mat-icon class="text-base">add_circle</mat-icon>
-              <span>1. ➕ Crear CFT</span>
+              <span>1. ➕ Crear</span>
             </button>
 
             <!-- Shortcut to Buscador CET -->
@@ -217,13 +217,14 @@ import { CFT } from '../models/tramite.models';
           <table class="min-w-full divide-y divide-slate-200 text-left text-xs bg-white">
             <thead class="bg-slate-50 text-slate-600 font-semibold uppercase tracking-wider text-[11px]">
               <tr>
-                <th scope="col" class="py-3 px-3 text-center w-12">Sec.</th>
-                <th scope="col" class="py-3 px-3">Reordenar</th>
-                <th scope="col" class="py-3 px-3.5">Etiqueta (Label)</th>
+                <th scope="col" class="py-3 px-3 text-center w-12">CdgEm</th>
+                <th scope="col" class="py-3 px-3">CdgFTr</th>
+                <th scope="col" class="py-3 px-3">Seguencia</th>
                 <th scope="col" class="py-3 px-3.5">CdgCET</th>
                 <th scope="col" class="py-3 px-3.5">CdgTipo</th>
                 <th scope="col" class="py-3 px-3.5">Obligatoriedad</th>
                 <th scope="col" class="py-3 px-3.5">Dominio</th>
+                <th scope="col" class="py-3 px-3.5">Etiqueta </th>
                 <th scope="col" class="py-3 px-3 text-center">Registro</th>
                 <th scope="col" class="py-3 px-3 text-center">Mostrar</th>
                 <th scope="col" class="py-3 px-3.5 text-right">Acciones</th>
@@ -232,37 +233,36 @@ import { CFT } from '../models/tramite.models';
             <tbody class="divide-y divide-slate-100 font-normal text-slate-700">
               @for (item of cftList(); track item.Secuencia; let idx = $index; let total = $count) {
                 <tr class="hover:bg-slate-50 transition-colors">
-                  
-                  <!-- Secuencia Badge -->
-                  <td class="py-3 px-3 text-center">
-                    <span class="inline-flex items-center justify-center w-6 h-6 rounded-full bg-slate-100 font-mono text-xs font-bold text-slate-800">
-                      {{ item.Secuencia }}
-                    </span>
+                          <!-- Etiqueta -->
+                  <td class="py-3 px-3.5 max-w-xs">
+                    <p class="font-semibold text-slate-900">{{ item.Etiqueta }}</p>
+                    @if (item.Placeholder || item.Ayuda) {
+                      <span class="text-[10px] text-slate-400 block truncate">
+                        {{ item.Placeholder || item.Ayuda }}
+                      </span>
+                    }
                   </td>
 
-                  <!-- Reordenar (Subir / Bajar) -->
-                  <td class="py-3 px-3 whitespace-nowrap">
-                    <div class="flex items-center gap-1">
-                      <button
-                        (click)="moveUp(idx)"
-                        [disabled]="idx === 0"
-                        [class.opacity-30]="idx === 0"
-                        title="Subir posición"
-                        class="p-1 text-slate-400 hover:text-blue-600 hover:bg-blue-50 rounded cursor-pointer disabled:cursor-not-allowed"
-                      >
-                        <mat-icon class="text-base">arrow_upward</mat-icon>
-                      </button>
-                      <button
-                        (click)="moveDown(idx)"
-                        [disabled]="idx === total - 1"
-                        [class.opacity-30]="idx === total - 1"
-                        title="Bajar posición"
-                        class="p-1 text-slate-400 hover:text-blue-600 hover:bg-blue-50 rounded cursor-pointer disabled:cursor-not-allowed"
-                      >
-                        <mat-icon class="text-base">arrow_downward</mat-icon>
-                      </button>
-                    </div>
+        <!-- Etiqueta -->
+                  <td class="py-3 px-3.5 max-w-xs">
+                    <p class="font-semibold text-slate-900">{{ item.Etiqueta }}</p>
+                    @if (item.Placeholder || item.Ayuda) {
+                      <span class="text-[10px] text-slate-400 block truncate">
+                        {{ item.Placeholder || item.Ayuda }}
+                      </span>
+                    }
                   </td>
+                  
+        <!-- Etiqueta -->
+                  <td class="py-3 px-3.5 max-w-xs">
+                    <p class="font-semibold text-slate-900">{{ item.Etiqueta }}</p>
+                    @if (item.Placeholder || item.Ayuda) {
+                      <span class="text-[10px] text-slate-400 block truncate">
+                        {{ item.Placeholder || item.Ayuda }}
+                      </span>
+                    }
+                  </td>
+                  
 
                   <!-- Etiqueta -->
                   <td class="py-3 px-3.5 max-w-xs">
@@ -407,12 +407,11 @@ import { CFT } from '../models/tramite.models';
                   <mat-icon class="text-lg">{{ isEditing() ? 'edit' : 'add_box' }}</mat-icon>
                 </div>
                 <div>
+                  
                   <h3 class="text-base font-bold text-slate-900">
-                    {{ isEditing() ? '3. 📝 Modificar CFT' : '1. ➕ Registrar Nuevo CFT' }}
+                    {{ isEditing() ? ' Editar' : ' Crear' }}
                   </h3>
-                  <p class="text-[11px] text-slate-500">
-                    Trámite destino: {{ service.selectedFCTCode() }}
-                  </p>
+                
                 </div>
               </div>
 
@@ -442,7 +441,7 @@ import { CFT } from '../models/tramite.models';
                 <!-- CdgEm -->
                 <div>
                   <label class="block font-semibold text-slate-700 mb-1">
-                    CdgEm (Empresa) <span class="text-rose-500">*</span>
+                    CdgEm <span class="text-rose-500">*</span>
                   </label>
                   <input
                     type="text"
@@ -454,7 +453,7 @@ import { CFT } from '../models/tramite.models';
                 <!-- CdgFTr -->
                 <div>
                   <label class="block font-semibold text-slate-700 mb-1">
-                    CdgFTr (FCT Trámite) <span class="text-rose-500">*</span>
+                    CdgFTr <span class="text-rose-500">*</span>
                   </label>
                   <input
                     type="text"
@@ -467,7 +466,7 @@ import { CFT } from '../models/tramite.models';
                 <!-- Secuencia -->
                 <div>
                   <label class="block font-semibold text-slate-700 mb-1">
-                    Secuencia (Orden) <span class="text-rose-500">*</span>
+                    Secuencia <span class="text-rose-500">*</span>
                   </label>
                   <input
                     type="number"
@@ -479,7 +478,7 @@ import { CFT } from '../models/tramite.models';
                 <!-- CdgCET -->
                 <div>
                   <label class="block font-semibold text-slate-700 mb-1">
-                    CdgCET (Elemento de Catálogo) <span class="text-rose-500">*</span>
+                    CdgCET <span class="text-rose-500">*</span>
                   </label>
                   <select
                     formControlName="CdgCET"
@@ -495,7 +494,7 @@ import { CFT } from '../models/tramite.models';
                 <!-- Etiqueta -->
                 <div class="sm:col-span-2">
                   <label class="block font-semibold text-slate-700 mb-1">
-                    Etiqueta Visible (Label) <span class="text-rose-500">*</span>
+                    Etiqueta  <span class="text-rose-500">*</span>
                   </label>
                   <input
                     type="text"
@@ -508,7 +507,7 @@ import { CFT } from '../models/tramite.models';
                 <!-- CdgTipo -->
                 <div>
                   <label class="block font-semibold text-slate-700 mb-1">
-                    CdgTipo (Tipo de Control) <span class="text-rose-500">*</span>
+                    CdgTipo  <span class="text-rose-500">*</span>
                   </label>
                   <select
                     formControlName="CdgTipo"
@@ -560,7 +559,7 @@ import { CFT } from '../models/tramite.models';
                 <!-- Registro ('S'/'N') -->
                 <div>
                   <label class="block font-semibold text-slate-700 mb-1">
-                    Registro (Captura editable) <span class="text-rose-500">*</span>
+                    Registro  <span class="text-rose-500">*</span>
                   </label>
                   <select
                     formControlName="Registro"
@@ -574,7 +573,7 @@ import { CFT } from '../models/tramite.models';
                 <!-- Mostrar ('S'/'N') -->
                 <div>
                   <label class="block font-semibold text-slate-700 mb-1">
-                    Mostrar (Visibilidad en Pantalla) <span class="text-rose-500">*</span>
+                    Mostrar  <span class="text-rose-500">*</span>
                   </label>
                   <select
                     formControlName="Mostrar"
@@ -585,18 +584,7 @@ import { CFT } from '../models/tramite.models';
                   </select>
                 </div>
 
-                <!-- Ayuda / Placeholder opcional -->
-                <div class="sm:col-span-2">
-                  <label class="block font-semibold text-slate-700 mb-1">
-                    Placeholder / Texto de Ayuda
-                  </label>
-                  <input
-                    type="text"
-                    formControlName="Placeholder"
-                    placeholder="Instrucción corta para el usuario que llena el trámite..."
-                    class="w-full text-xs bg-white border border-slate-300 rounded-xl px-3 py-2 outline-none focus:ring-2 focus:ring-blue-500"
-                  />
-                </div>
+            
 
               </div>
 
@@ -613,8 +601,7 @@ import { CFT } from '../models/tramite.models';
                   type="submit"
                   class="inline-flex items-center gap-1.5 px-5 py-2 text-xs font-semibold text-white bg-blue-600 hover:bg-blue-700 rounded-xl shadow-sm transition-colors cursor-pointer"
                 >
-                  <mat-icon class="text-sm">save</mat-icon>
-                  <span>{{ isEditing() ? 'Guardar Cambios' : 'Registrar CFT' }}</span>
+                  <span>{{ isEditing() ? 'Aceptar' : 'Aceptar' }}</span>
                 </button>
               </div>
 
@@ -635,13 +622,9 @@ import { CFT } from '../models/tramite.models';
               <mat-icon class="text-2xl">delete</mat-icon>
             </div>
 
-            <h3 class="text-base font-bold text-slate-900">4. ❌ Eliminar CFT</h3>
+            <h3 class="text-base font-bold text-slate-900">❌ Eliminar </h3>
             <p class="text-xs text-slate-500 mt-1">
-              ¿Desea remover el campo <strong class="text-slate-800">{{ item.Etiqueta }}</strong> (Secuencia {{ item.Secuencia }}) de este trámite?
-            </p>
-
-            <p class="text-[11px] text-slate-400 mt-2 bg-slate-50 p-2 rounded-lg border border-slate-100">
-              Las secuencias de los campos restantes se reindexarán automáticamente para mantener el orden consecutivo.
+              ¿Desea eliminar ?
             </p>
 
             <div class="mt-5 flex items-center justify-center gap-2">
@@ -655,7 +638,7 @@ import { CFT } from '../models/tramite.models';
                 (click)="confirmDelete(item)"
                 class="px-5 py-2 text-xs font-bold text-white bg-rose-600 hover:bg-rose-700 rounded-xl shadow-sm transition-colors cursor-pointer"
               >
-                Eliminar Campo
+                Eliminar 
               </button>
             </div>
 
