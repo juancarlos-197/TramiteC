@@ -380,16 +380,9 @@ import { FCT } from '../models/tramite.models';
                 
                 <!-- Codigo (Identificador Único) -->
                 <div>
-                  <div class="flex items-center justify-between">
-                    <label class="block text-xs font-semibold text-slate-700 mb-1">
-                      Codigo
-                    </label>
-                    @if (isEditing()) {
-                      <span class="inline-flex items-center gap-1 text-[10px] text-amber-700 bg-amber-50 px-1.5 py-0.5 rounded border border-amber-200">
-                        <mat-icon class="text-xs">lock</mat-icon> Inmutable
-                      </span>
-                    }
-                  </div>
+                  <label class="block text-xs font-semibold text-slate-700 mb-1">
+                    Codigo
+                  </label>
                   <input
                     type="text"
                     formControlName="Codigo"
