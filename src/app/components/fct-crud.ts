@@ -356,11 +356,8 @@ import { FCT } from '../models/tramite.models';
                 </div>
                 <div>
                   <h3 class="text-base font-bold text-slate-900">
-                    {{ isEditing() ? '3. 📝 Actualizar FCT existente' : '1. ➕ Crear Nuevo FCT' }}
+                    {{ isEditing() ? 'Actualizar FCT' : 'Crear FCT' }}
                   </h3>
-                  <p class="text-[11px] text-slate-500">
-                    {{ isEditing() ? 'Restricción activa: El código identificador no puede ser modificado' : '1.3 Validación de campos requeridos y coherencia de vigencias' }}
-                  </p>
                 </div>
               </div>
 
@@ -505,7 +502,7 @@ import { FCT } from '../models/tramite.models';
                 <!-- Creacion -->
                 <div>
                   <label class="block text-xs font-semibold text-slate-700 mb-1">
-                    Fecha de Creación <span class="text-rose-500">*</span>
+                    Creacion <span class="text-rose-500">*</span>
                   </label>
                   <input
                     type="date"
@@ -514,10 +511,10 @@ import { FCT } from '../models/tramite.models';
                   />
                 </div>
 
-                <!-- Desde (Vigencia) -->
+                <!-- Desde -->
                 <div>
                   <label class="block text-xs font-semibold text-slate-700 mb-1">
-                    Vigencia Desde <span class="text-rose-500">*</span>
+                    Desde <span class="text-rose-500">*</span>
                   </label>
                   <input
                     type="date"
@@ -526,30 +523,16 @@ import { FCT } from '../models/tramite.models';
                   />
                 </div>
 
-                <!-- Hasta (Vigencia) -->
+                <!-- Hasta -->
                 <div>
                   <label class="block text-xs font-semibold text-slate-700 mb-1">
-                    Vigencia Hasta <span class="text-rose-500">*</span>
+                    Hasta <span class="text-rose-500">*</span>
                   </label>
                   <input
                     type="date"
                     formControlName="Hasta"
                     class="w-full text-xs bg-white border border-slate-300 rounded-xl px-3 py-2 outline-none focus:ring-2 focus:ring-blue-500"
                   />
-                </div>
-
-                <!-- Estado -->
-                <div>
-                  <label class="block text-xs font-semibold text-slate-700 mb-1">
-                    Estado Operativo
-                  </label>
-                  <select
-                    formControlName="Estado"
-                    class="w-full text-xs bg-white border border-slate-300 rounded-xl px-3 py-2 outline-none focus:ring-2 focus:ring-blue-500"
-                  >
-                    <option value="ACTIVO">ACTIVO (En operación)</option>
-                    <option value="INACTIVO">INACTIVO (Fuera de vigencia)</option>
-                  </select>
                 </div>
 
               </div>
@@ -566,10 +549,9 @@ import { FCT } from '../models/tramite.models';
 
                 <button
                   type="submit"
-                  class="inline-flex items-center gap-1.5 px-5 py-2 text-xs font-semibold text-white bg-blue-600 hover:bg-blue-700 rounded-xl shadow-sm transition-colors cursor-pointer"
+                  class="px-5 py-2 text-xs font-semibold text-white bg-blue-600 hover:bg-blue-700 rounded-xl shadow-sm transition-colors cursor-pointer"
                 >
-                  <mat-icon class="text-sm">save</mat-icon>
-                  <span>{{ isEditing() ? 'Guardar Cambios' : 'Registrar FCT' }}</span>
+                  Aceptar
                 </button>
               </div>
 
