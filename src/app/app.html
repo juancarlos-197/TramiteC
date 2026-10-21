@@ -1,0 +1,44 @@
+<div class="min-h-screen bg-slate-50 flex flex-col font-sans selection:bg-blue-100 selection:text-blue-900">
+  <!-- Top Navigation Bar -->
+  <app-navbar></app-navbar>
+
+  <!-- Main View Area -->
+  <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6 space-y-6">
+    
+    @switch (service.activeTab()) {
+      @case ('fct') {
+        <app-fct-crud></app-fct-crud>
+      }
+      @case ('cft') {
+        <app-cft-crud></app-cft-crud>
+      }
+      @case ('cet') {
+        <app-cet-search></app-cet-search>
+      }
+      @case ('preview') {
+        <app-tramite-preview></app-tramite-preview>
+      }
+    }
+
+  </main>
+
+  <!-- Clean Enterprise Footer -->
+  <footer class="bg-white border-t border-slate-200 mt-auto py-5 text-xs text-slate-500">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between gap-3">
+      <div class="flex items-center gap-2">
+        <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
+        <span class="font-medium text-slate-700">Diseñador de Trámites y Formularios (FCT / CFT / CET)</span>
+        <span class="text-slate-300">|</span>
+        <span>Entorno Empresarial Activo</span>
+      </div>
+
+      <div class="flex items-center gap-4 text-slate-400">
+        <span>FCT: Ficha de Control de Trámite</span>
+        <span>•</span>
+        <span>CFT: Configuración de Campos</span>
+        <span>•</span>
+        <span>CET: Catálogo de Elementos</span>
+      </div>
+    </div>
+  </footer>
+</div>

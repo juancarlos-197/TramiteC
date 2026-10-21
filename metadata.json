@@ -1,0 +1,6 @@
+{
+  "name": "Diseñador de Trámites FCT & CFT",
+  "description": "Sistema empresarial para el diseño y configuración de trámites (FCT), gestión de campos (CFT) y catálogo de elementos (CET).",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
