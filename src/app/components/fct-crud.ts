@@ -196,6 +196,10 @@ import { FCT } from '../models/tramite.models';
                 <th scope="col" class="py-3 px-3.5">Codigo</th>
                 <th scope="col" class="py-3 px-3.5">Tipo</th>
                 <th scope="col" class="py-3 px-3.5">CdgTpc</th>
+                <th scope="col" class="py-3 px-3.5">CgdPCr</th>
+                <th scope="col" class="py-3 px-3.5">CdgPH</th>
+                <th scope="col" class="py-3 px-3.5">Creacion</th>
+                <th scope="col" class="py-3 px-3.5">CdgPe</th>
                 <th scope="col" class="py-3 px-3.5">Desde</th>
                 <th scope="col" class="py-3 px-3.5 text-right">Acciones</th>
               </tr>
@@ -227,7 +231,6 @@ import { FCT } from '../models/tramite.models';
                         <span class="w-2 h-2 rounded-full bg-blue-600" title="Trámite activo en sesión"></span>
                       }
                     </div>
-                    <span class="block text-[10px] text-slate-400 font-normal">PH: {{ item.CodigoPH || 'N/A' }}</span>
                   </td>
 
                   <!-- Tipo -->
@@ -237,19 +240,38 @@ import { FCT } from '../models/tramite.models';
                     </span>
                   </td>
 
-                  <!-- CdgTpc / CdgPCr -->
+                  <!-- CdgTpc -->
                   <td class="py-3 px-3.5 whitespace-nowrap text-[11px] font-mono text-slate-600">
-                    <div>{{ item.CdgTpc }}</div>
-                    <div class="text-[10px] text-slate-400">{{ item.CdgPCr }}</div>
+                    {{ item.CdgTpc }}
                   </td>
 
-                  <!-- Desde / Hasta -->
+                  <!-- CgdPCr -->
+                  <td class="py-3 px-3.5 whitespace-nowrap text-[11px] font-mono text-slate-600">
+                    {{ item.CdgPCr }}
+                  </td>
+
+                  <!-- CdgPH -->
+                  <td class="py-3 px-3.5 whitespace-nowrap text-[11px] font-mono text-slate-600">
+                    {{ item.CodigoPH || '—' }}
+                  </td>
+
+                  <!-- Creacion -->
+                  <td class="py-3 px-3.5 whitespace-nowrap text-[11px] font-mono text-slate-600">
+                    {{ item.Creacion }}
+                  </td>
+
+                  <!-- CdgPe -->
+                  <td class="py-3 px-3.5 whitespace-nowrap text-[11px] font-mono text-slate-600">
+                    <span class="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] bg-slate-50 text-slate-600 border border-slate-200">
+                      {{ item.CdgPe }}
+                    </span>
+                  </td>
+
+                  <!-- Desde -->
                   <td class="py-3 px-3.5 whitespace-nowrap text-[11px] text-slate-600">
                     <div class="flex items-center gap-1">
                       <mat-icon class="text-xs text-slate-400">calendar_today</mat-icon>
                       <span>{{ item.Desde }}</span>
-                      <span class="text-slate-400">al</span>
-                      <span>{{ item.Hasta }}</span>
                     </div>
                   </td>
 
@@ -278,7 +300,7 @@ import { FCT } from '../models/tramite.models';
                 </tr>
               } @empty {
                 <tr>
-                  <td colspan="6" class="py-12 text-center text-slate-400">
+                  <td colspan="10" class="py-12 text-center text-slate-400">
                     <div class="flex flex-col items-center justify-center gap-2">
                       <mat-icon class="text-4xl text-slate-300">search_off</mat-icon>
                       <p class="text-sm font-medium text-slate-600">No se encontraron trámites con los filtros especificados.</p>
@@ -707,7 +729,7 @@ import { FCT } from '../models/tramite.models';
               <!-- 4.2 Motivo de Inactivación -->
               <div class="mt-4">
                 <label class="block text-xs font-semibold text-slate-700 mb-1">
-                  4.2 Motivo de Inactivación / Baja <span class="text-rose-500">*</span>
+                  4.2 Motivo de Inactivación / Baja
                 </label>
                 <textarea
                   [value]="motivoInactivacionInput()"
