@@ -192,16 +192,13 @@ import { FCT } from '../models/tramite.models';
           <table class="min-w-full divide-y divide-slate-200 text-left text-xs bg-white">
             <thead class="bg-slate-50/90 text-slate-600 font-semibold uppercase tracking-wider text-[11px]">
               <tr>
-                <th scope="col" class="py-3 px-3.5">CdgEm</th>
-                <th scope="col" class="py-3 px-3.5">Codigo</th>
+                <th scope="col" class="py-3 px-3.5">Código </th>
+                <th scope="col" class="py-3 px-3.5">Tipo de producto crédito</th>
+                <th scope="col" class="py-3 px-3.5">Producto de crédito</th>
+                <th scope="col" class="py-3 px-3.5">Producto de ahorro</th>
                 <th scope="col" class="py-3 px-3.5">Tipo</th>
-                <th scope="col" class="py-3 px-3.5">CdgTpc</th>
-                <th scope="col" class="py-3 px-3.5">CgdPCr</th>
-                <th scope="col" class="py-3 px-3.5">CdgPH</th>
-                <th scope="col" class="py-3 px-3.5">Creacion</th>
-                <th scope="col" class="py-3 px-3.5">CdgPe</th>
-                <th scope="col" class="py-3 px-3.5">Desde</th>
-                <th scope="col" class="py-3 px-3.5">Hasta</th>
+                <th scope="col" class="py-3 px-3.5">Inico de vigencia</th>
+                <th scope="col" class="py-3 px-3.5">Fin de vigencia</th>
                 <th scope="col" class="py-3 px-3.5 text-right">Acciones</th>
               </tr>
             </thead>
@@ -211,12 +208,12 @@ import { FCT } from '../models/tramite.models';
                   [class.bg-blue-50]="service.selectedFCTCode() === item.Codigo"
                   class="hover:bg-slate-50/80 transition-colors"
                 >
-                  <!-- CdgEm -->
+                  <!-- CdgEm --
                   <td class="py-3 px-3.5 font-mono text-[11px] font-semibold text-slate-600 whitespace-nowrap">
                     <span class="inline-flex items-center px-2 py-0.5 rounded bg-slate-100 text-slate-700 border border-slate-200">
                       {{ item.CdgEm }}
                     </span>
-                  </td>
+                  </td>-->
 
                   <!-- Codigo -->
                   <td class="py-3 px-3.5 font-mono text-xs font-bold text-blue-700 whitespace-nowrap">
@@ -256,17 +253,17 @@ import { FCT } from '../models/tramite.models';
                     {{ item.CodigoPH || '—' }}
                   </td>
 
-                  <!-- Creacion -->
+                  <!-- Creacion 
                   <td class="py-3 px-3.5 whitespace-nowrap text-[11px] font-mono text-slate-600">
                     {{ item.Creacion }}
-                  </td>
+                  </td>-->
 
-                  <!-- CdgPe -->
+                  <!-- CdgPe -
                   <td class="py-3 px-3.5 whitespace-nowrap text-[11px] font-mono text-slate-600">
                     <span class="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] bg-slate-50 text-slate-600 border border-slate-200">
                       {{ item.CdgPe }}
                     </span>
-                  </td>
+                  </td>-->
 
                   <!-- Desde -->
                   <td class="py-3 px-3.5 whitespace-nowrap text-[11px] text-slate-600">
@@ -397,7 +394,7 @@ import { FCT } from '../models/tramite.models';
                   }
                 </div>
 
-                <!-- CdgEm -->
+                <!-- CdgEm 
                 <div>
                   <label class="block text-xs font-semibold text-slate-700 mb-1">
                     Empresa
@@ -410,12 +407,12 @@ import { FCT } from '../models/tramite.models';
                     <option value="EMP02">EMP02 - Sucursal Regional</option>
                     <option value="EMP03">EMP03 - División Servicios</option>
                   </select>
-                </div>
+                </div>-->
 
                 <!-- CdgTpc -->
                 <div>
                   <label class="block text-xs font-semibold text-slate-700 mb-1">
-                    CdgTpc
+                    Tipo de producto de crédito
                   </label>
                   <input
                     type="text"
@@ -428,7 +425,7 @@ import { FCT } from '../models/tramite.models';
                 <!-- CdgPCr -->
                 <div>
                   <label class="block text-xs font-semibold text-slate-700 mb-1">
-                    CdgPCr
+                    Producto de crédito
                   </label>
                   <input
                     type="text"
@@ -441,7 +438,7 @@ import { FCT } from '../models/tramite.models';
                 <!-- CodigoPH -->
                 <div>
                   <label class="block text-xs font-semibold text-slate-700 mb-1">
-                    CodigoPH
+                    Producto de ahorro
                   </label>
                   <input
                     type="text"
@@ -468,7 +465,7 @@ import { FCT } from '../models/tramite.models';
                   </select>
                 </div>
 
-                <!-- CdgPe -->
+                <!-- CdgPe 
                 <div>
                   <label class="block text-xs font-semibold text-slate-700 mb-1">
                     CdgPe
@@ -484,23 +481,23 @@ import { FCT } from '../models/tramite.models';
                     <option value="TRIMESTRAL">TRIMESTRAL</option>
                   </select>
                 </div>
-
-                <!-- Creacion -->
+-->
+                <!-- Creacion 
                 <div>
                   <label class="block text-xs font-semibold text-slate-700 mb-1">
-                    Creacion
+                    Creación
                   </label>
                   <input
                     type="date"
                     formControlName="Creacion"
                     class="w-full text-xs bg-white border border-slate-300 rounded-xl px-3 py-2 outline-none focus:ring-2 focus:ring-blue-500"
                   />
-                </div>
+                </div>-->
 
                 <!-- Desde -->
                 <div>
                   <label class="block text-xs font-semibold text-slate-700 mb-1">
-                    Desde
+                    Inico de vigencia
                   </label>
                   <input
                     type="date"
@@ -512,7 +509,7 @@ import { FCT } from '../models/tramite.models';
                 <!-- Hasta -->
                 <div>
                   <label class="block text-xs font-semibold text-slate-700 mb-1">
-                    Hasta
+                    Fin de vigencia
                   </label>
                   <input
                     type="date"

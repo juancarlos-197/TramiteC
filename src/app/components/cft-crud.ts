@@ -217,13 +217,11 @@ import { CFT } from '../models/tramite.models';
           <table class="min-w-full divide-y divide-slate-200 text-left text-xs bg-white">
             <thead class="bg-slate-50 text-slate-600 font-semibold uppercase tracking-wider text-[11px]">
               <tr>
-                <th scope="col" class="py-3 px-3 text-center w-12">CdgEm</th>
-                <th scope="col" class="py-3 px-3">CdgFTr</th>
-                <th scope="col" class="py-3 px-3">Seguencia</th>
-                <th scope="col" class="py-3 px-3.5">CdgCET</th>
-                <th scope="col" class="py-3 px-3.5">CdgTipo</th>
+                <th scope="col" class="py-3 px-3">Trámite</th>
+                <th scope="col" class="py-3 px-3.5">Elemento de trámite</th>
+                <th scope="col" class="py-3 px-3.5">Tipo de elemento</th>
                 <th scope="col" class="py-3 px-3.5">Obligatoriedad</th>
-                <th scope="col" class="py-3 px-3.5">Dominio</th>
+                <th scope="col" class="py-3 px-3.5">Valor(es) posibles</th>
                 <th scope="col" class="py-3 px-3.5">Etiqueta </th>
                 <th scope="col" class="py-3 px-3 text-center">Registro</th>
                 <th scope="col" class="py-3 px-3 text-center">Mostrar</th>
@@ -233,47 +231,30 @@ import { CFT } from '../models/tramite.models';
             <tbody class="divide-y divide-slate-100 font-normal text-slate-700">
               @for (item of cftList(); track item.Secuencia; let idx = $index; let total = $count) {
                 <tr class="hover:bg-slate-50 transition-colors">
-                          <!-- Etiqueta -->
+                          <!-- CdgFTr -->
                   <td class="py-3 px-3.5 max-w-xs">
-                    <p class="font-semibold text-slate-900">{{ item.Etiqueta }}</p>
-                    @if (item.Placeholder || item.Ayuda) {
+                    <p class="font-semibold text-slate-900">{{ item.CdgFTr }}</p>
+                    @if (item.CdgFTr || item.Ayuda) {
                       <span class="text-[10px] text-slate-400 block truncate">
-                        {{ item.Placeholder || item.Ayuda }}
+                        {{ item.CdgFTr || item.Ayuda }}
                       </span>
                     }
                   </td>
 
-        <!-- Etiqueta -->
+        <!-- CdgCET -->
                   <td class="py-3 px-3.5 max-w-xs">
-                    <p class="font-semibold text-slate-900">{{ item.Etiqueta }}</p>
-                    @if (item.Placeholder || item.Ayuda) {
+                    <p class="font-semibold text-slate-900">{{ item.CdgCET }}</p>
+                    @if (item.CdgCET || item.Ayuda) {
                       <span class="text-[10px] text-slate-400 block truncate">
-                        {{ item.Placeholder || item.Ayuda }}
+                        {{ item.CdgCET || item.Ayuda }}
                       </span>
                     }
                   </td>
                   
         <!-- Etiqueta -->
-                  <td class="py-3 px-3.5 max-w-xs">
-                    <p class="font-semibold text-slate-900">{{ item.Etiqueta }}</p>
-                    @if (item.Placeholder || item.Ayuda) {
-                      <span class="text-[10px] text-slate-400 block truncate">
-                        {{ item.Placeholder || item.Ayuda }}
-                      </span>
-                    }
-                  </td>
-                  
+             
 
-                  <!-- Etiqueta -->
-                  <td class="py-3 px-3.5 max-w-xs">
-                    <p class="font-semibold text-slate-900">{{ item.Etiqueta }}</p>
-                    @if (item.Placeholder || item.Ayuda) {
-                      <span class="text-[10px] text-slate-400 block truncate">
-                        {{ item.Placeholder || item.Ayuda }}
-                      </span>
-                    }
-                  </td>
-
+                 
                   <!-- CdgCET -->
                   <td class="py-3 px-3.5 font-mono text-xs font-semibold text-slate-700 whitespace-nowrap">
                     {{ item.CdgCET }}
@@ -440,20 +421,20 @@ import { CFT } from '../models/tramite.models';
                 
                 <!-- CdgEm -->
                 <div>
-                  <label class="block font-semibold text-slate-700 mb-1">
-                    CdgEm <span class="text-rose-500">*</span>
+                  <!-- <label class="block font-semibold text-slate-700 mb-1">
+                    Empresa <span class="text-rose-500">*</span>
                   </label>
                   <input
                     type="text"
                     formControlName="CdgEm"
                     class="w-full text-xs font-mono bg-white border border-slate-300 rounded-xl px-3 py-2 outline-none focus:ring-2 focus:ring-blue-500"
-                  />
+                  /> -->
                 </div>
 
                 <!-- CdgFTr -->
                 <div>
                   <label class="block font-semibold text-slate-700 mb-1">
-                    CdgFTr <span class="text-rose-500">*</span>
+                    Trámite <span class="text-rose-500">*</span>
                   </label>
                   <input
                     type="text"
@@ -463,7 +444,7 @@ import { CFT } from '../models/tramite.models';
                   />
                 </div>
 
-                <!-- Secuencia -->
+                <!-- Secuencia 
                 <div>
                   <label class="block font-semibold text-slate-700 mb-1">
                     Secuencia <span class="text-rose-500">*</span>
@@ -474,11 +455,11 @@ import { CFT } from '../models/tramite.models';
                     class="w-full text-xs font-mono bg-white border border-slate-300 rounded-xl px-3 py-2 outline-none focus:ring-2 focus:ring-blue-500"
                   />
                 </div>
-
+-->
                 <!-- CdgCET -->
                 <div>
                   <label class="block font-semibold text-slate-700 mb-1">
-                    CdgCET <span class="text-rose-500">*</span>
+                    Elemento de trámite <span class="text-rose-500">*</span>
                   </label>
                   <select
                     formControlName="CdgCET"
@@ -507,7 +488,7 @@ import { CFT } from '../models/tramite.models';
                 <!-- CdgTipo -->
                 <div>
                   <label class="block font-semibold text-slate-700 mb-1">
-                    CdgTipo  <span class="text-rose-500">*</span>
+                    Tipo de elemento  <span class="text-rose-500">*</span>
                   </label>
                   <select
                     formControlName="CdgTipo"
@@ -546,7 +527,7 @@ import { CFT } from '../models/tramite.models';
                 <!-- Dominio -->
                 <div class="sm:col-span-2">
                   <label class="block font-semibold text-slate-700 mb-1">
-                    Dominio de Valores o Reglas <span class="text-rose-500">*</span>
+                    Dominio  <span class="text-rose-500">*</span>
                   </label>
                   <input
                     type="text"
