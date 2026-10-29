@@ -21,51 +21,17 @@ import { CET, CFT } from '../models/tramite.models';
                 <mat-icon class="text-lg">travel_explore</mat-icon>
               </span>
               <h2 class="text-xl font-bold text-slate-900 tracking-tight">
-                5.1 Buscador CET — Catálogo de Elementos de Trámites
+                 CET — Buscador diseñador de Trámites
               </h2>
             </div>
             <p class="text-xs text-slate-500 mt-1 max-w-2xl">
-              Localice campos y elementos reutilizables de la tabla CET para asignarlos como nuevos campos (CFT) al trámite seleccionado.
             </p>
           </div>
 
-          <!-- Target FCT Selector -->
-          <div class="flex items-center gap-3 bg-slate-50 border border-slate-200 p-2.5 rounded-xl">
-            <div class="text-xs">
-              <span class="text-slate-400 block text-[10px] font-semibold uppercase">FCT Destino Actual:</span>
-              <select
-                [value]="service.selectedFCTCode()"
-                (change)="onSelectFCT($event)"
-                class="bg-white text-xs font-bold text-slate-900 border border-slate-300 rounded-lg px-2.5 py-1 outline-none focus:ring-1 focus:ring-blue-500 max-w-[280px] truncate"
-              >
-                @for (f of service.fctList(); track f.Codigo) {
-                  <option [value]="f.Codigo">
-                    {{ f.Codigo }} — {{ f.Descripcion }}
-                  </option>
-                }
-              </select>
-            </div>
-
-            <button
-              (click)="service.activeTab.set('cft')"
-              class="px-3 py-1.5 text-xs font-semibold text-blue-700 bg-blue-50 hover:bg-blue-100 rounded-lg transition-colors cursor-pointer whitespace-nowrap"
-            >
-              Ver CFTs ({{ service.selectedFCTCftList().length }}) &rarr;
-            </button>
-          </div>
+          
         </div>
 
-        <!-- Batch Assignment Bar if items are selected -->
-        @if (selectedCETS().size > 0) {
-          <div class="mt-4 p-3 bg-indigo-50 border border-indigo-200 rounded-xl flex items-center justify-between text-xs animate-in fade-in">
-            <div class="flex items-center gap-2 text-indigo-900 font-semibold">
-              <mat-icon class="text-base text-indigo-600">check_box</mat-icon>
-              <span>{{ selectedCETS().size }} campo(s) CET seleccionado(s) para asignar en lote.</span>
-            </div>
-
-           
-          </div>
-        }
+    
       </div>
 
       <!-- 5.1 Interfaz de Búsqueda con Filtros Exigidos:
@@ -96,7 +62,7 @@ import { CET, CFT } from '../models/tramite.models';
               type="text"
               [value]="filtroCodigo()"
               (input)="filtroCodigo.set($any($event.target).value)"
-              placeholder="Ej. CET_NUM_DOC"
+              placeholder="Ej. CODIGO-CRÉDITO-001"
               class="w-full text-xs font-mono bg-slate-50 border border-slate-300 rounded-lg px-2.5 py-1.5 outline-none focus:bg-white focus:ring-1 focus:ring-blue-500"
             />
           </div>
@@ -121,15 +87,8 @@ import { CET, CFT } from '../models/tramite.models';
               (change)="filtroTipo.set($any($event.target).value)"
               class="w-full text-xs bg-slate-50 border border-slate-300 rounded-lg px-2.5 py-1.5 outline-none focus:bg-white focus:ring-1 focus:ring-blue-500"
             >
-              <option value="">Todos los tipos</option>
-              <option value="INPUT">INPUT</option>
-              <option value="SELECT">SELECT</option>
-              <option value="DATE">DATE</option>
-              <option value="TEXTAREA">TEXTAREA</option>
-              <option value="NUMBER">NUMBER</option>
-              <option value="FILE">FILE</option>
-              <option value="CHECKBOX">CHECKBOX</option>
-              <option value="RADIO">RADIO</option>
+              <option value="">Crédito</option>
+              <option value="INPUT">Ahorro</option>
             </select>
           </div>
 
@@ -147,7 +106,7 @@ import { CET, CFT } from '../models/tramite.models';
             </select>
           </div>
 
-          <!-- 5. Filtro TipoDato -->
+          <!-- 5. Filtro TipoDato -
           <div>
             <label class="block text-[11px] font-semibold text-slate-600 mb-1">TipoDato</label>
             <select
@@ -156,16 +115,13 @@ import { CET, CFT } from '../models/tramite.models';
               class="w-full text-xs bg-slate-50 border border-slate-300 rounded-lg px-2.5 py-1.5 outline-none focus:bg-white focus:ring-1 focus:ring-blue-500"
             >
               <option value="">Todos los tipos de dato</option>
-              <option value="VARCHAR">VARCHAR</option>
-              <option value="NUMBER">NUMBER</option>
-              <option value="DATE">DATE</option>
-              <option value="BOOLEAN">BOOLEAN</option>
-              <option value="BLOB">BLOB</option>
-              <option value="TEXT">TEXT</option>
+              <option value="VARCHAR"> </option>
+              <option value="NUMBER"></option>
+            
             </select>
-          </div>
+          </div>->
 
-          <!-- 6. Filtro LongDato -->
+          <!-- 6. Filtro LongDato 
           <div>
             <label class="block text-[11px] font-semibold text-slate-600 mb-1">LongDato</label>
             <input
@@ -175,9 +131,9 @@ import { CET, CFT } from '../models/tramite.models';
               placeholder="Ej. 20, 100..."
               class="w-full text-xs font-mono bg-slate-50 border border-slate-300 rounded-lg px-2.5 py-1.5 outline-none focus:bg-white focus:ring-1 focus:ring-blue-500"
             />
-          </div>
+          </div>-->
 
-          <!-- 7. Filtro LongDec -->
+          <!-- 7. Filtro LongDec --
           <div>
             <label class="block text-[11px] font-semibold text-slate-600 mb-1">LongDec</label>
             <input
@@ -187,9 +143,9 @@ import { CET, CFT } from '../models/tramite.models';
               placeholder="Ej. 0, 2..."
               class="w-full text-xs font-mono bg-slate-50 border border-slate-300 rounded-lg px-2.5 py-1.5 outline-none focus:bg-white focus:ring-1 focus:ring-blue-500"
             />
-          </div>
+          </div>-->
 
-          <!-- 8. Filtro Acceso -->
+          <!-- 8. Filtro Acceso -
           <div>
             <label class="block text-[11px] font-semibold text-slate-600 mb-1">Acceso</label>
             <select
@@ -202,9 +158,9 @@ import { CET, CFT } from '../models/tramite.models';
               <option value="LECTURA">LECTURA</option>
               <option value="CONTROLADO">CONTROLADO</option>
             </select>
-          </div>
+          </div>-->
 
-          <!-- 9. Filtro Visible -->
+          <!-- 9. Filtro Visible -
           <div>
             <label class="block text-[11px] font-semibold text-slate-600 mb-1">Visible</label>
             <select
@@ -216,9 +172,9 @@ import { CET, CFT } from '../models/tramite.models';
               <option value="S">S (Visible)</option>
               <option value="N">N (Oculto)</option>
             </select>
-          </div>
+          </div>-->
 
-          <!-- 10. Filtro Dominio -->
+          <!-- 10. Filtro Dominio --
           <div>
             <label class="block text-[11px] font-semibold text-slate-600 mb-1">Dominio</label>
             <input
@@ -230,9 +186,9 @@ import { CET, CFT } from '../models/tramite.models';
             />
           </div>
 
-        </div>
+        </div>-->
 
-        <!-- Tabla de Resultados CET -->
+        <!-- Tabla de Resultados CET --
         <div class="overflow-x-auto rounded-xl border border-slate-200 mt-4">
           <table class="min-w-full divide-y divide-slate-200 text-left text-xs bg-white">
             <thead class="bg-slate-50/90 text-slate-600 font-semibold uppercase tracking-wider text-[11px]">
@@ -263,7 +219,7 @@ import { CET, CFT } from '../models/tramite.models';
                   [class.bg-slate-50]="assignedSeq !== null"
                   class="hover:bg-slate-50/80 transition-colors"
                 >
-                  <!-- Checkbox Selección múltiple -->
+                  <!-- Checkbox Selección múltiple --
                   <td class="py-3 px-3 text-center">
                     <input
                       type="checkbox"
@@ -273,12 +229,12 @@ import { CET, CFT } from '../models/tramite.models';
                     />
                   </td>
 
-                  <!-- Código CET -->
+                  <!-- Código CET --
                   <td class="py-3 px-3.5 font-mono text-xs font-bold text-slate-800 whitespace-nowrap">
                     {{ item.Codigo }}
                   </td>
 
-                  <!-- Nombre y Descripción -->
+                  <!-- Nombre y Descripción --
                   <td class="py-3 px-3.5 max-w-xs">
                     <p class="font-semibold text-slate-900">{{ item.Nombre }}</p>
                     @if (item.Descripcion) {
@@ -286,20 +242,20 @@ import { CET, CFT } from '../models/tramite.models';
                     }
                   </td>
 
-                  <!-- Tipo -->
+                  <!-- Tipo --
                   <td class="py-3 px-3.5 whitespace-nowrap">
                     <span class="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-semibold bg-slate-100 text-slate-800 border border-slate-200">
                       {{ item.Tipo }}
                     </span>
                   </td>
 
-                  <!-- TipoDato (Long / Dec) -->
+                  <!-- TipoDato (Long / Dec) --
                   <td class="py-3 px-3.5 whitespace-nowrap font-mono text-[11px] text-slate-600">
                     <span class="font-bold text-slate-700">{{ item.TipoDato }}</span>
                     <span class="text-slate-400"> ({{ item.LongDato }}{{ item.LongDec ? ',' + item.LongDec : '' }})</span>
                   </td>
 
-                  <!-- Obligatorio -->
+                  <!-- Obligatorio --
                   <td class="py-3 px-3.5 whitespace-nowrap">
                     @if (item.Obligatorio === 'S') {
                       <span class="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-semibold bg-rose-50 text-rose-700 border border-rose-200">
@@ -312,18 +268,18 @@ import { CET, CFT } from '../models/tramite.models';
                     }
                   </td>
 
-                  <!-- Acceso / Visible -->
+                  <!-- Acceso / Visible --
                   <td class="py-3 px-3.5 whitespace-nowrap text-[11px] text-slate-600">
                     <div>{{ item.Acceso }}</div>
                     <span class="text-[10px] text-slate-400">Vis: {{ item.Visible }}</span>
                   </td>
 
-                  <!-- Dominio -->
+                  <!-- Dominio --
                   <td class="py-3 px-3.5 max-w-[140px] truncate font-mono text-[11px] text-slate-600" [title]="item.Dominio">
                     {{ item.Dominio }}
                   </td>
 
-                  <!-- Estado en FCT activo -->
+                  <!-- Estado en FCT activo --
                   <td class="py-3 px-3.5 text-center whitespace-nowrap">
                     @if (assignedSeq !== null) {
                       <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200">
@@ -337,7 +293,7 @@ import { CET, CFT } from '../models/tramite.models';
                     }
                   </td>
 
-                  <!-- Acción: Asignar al FCT -->
+                  <!-- Acción: Asignar al FCT --
                   <td class="py-3 px-3.5 text-right whitespace-nowrap">
                     @if (assignedSeq !== null) {
                       <button
@@ -372,7 +328,7 @@ import { CET, CFT } from '../models/tramite.models';
         <div class="flex items-center justify-between text-xs text-slate-500 pt-2 px-1">
           <span>Mostrando {{ cetFiltrados().length }} de {{ service.cetList().length }} elementos de catálogo</span>
           <span class="text-[11px] text-slate-400">Seleccione uno o varios campos para agregarlos directamente a {{ service.selectedFCTCode() }}</span>
-        </div>
+        </div>-->
 
       </div>
 

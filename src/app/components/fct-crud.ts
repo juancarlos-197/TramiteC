@@ -1,299 +1,136 @@
-import { ChangeDetectionStrategy, Component, inject, signal, computed } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { ReactiveFormsModule, FormGroup, FormControl, Validators } from '@angular/forms';
-import { MatIconModule } from '@angular/material/icon';
-import { TramitesService } from '../services/tramites';
-import { FCT } from '../models/tramite.models';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  inject,
+  signal,
+  computed,
+} from "@angular/core";
+import { CommonModule } from "@angular/common";
+import {
+  ReactiveFormsModule,
+  FormGroup,
+  FormControl,
+  Validators,
+} from "@angular/forms";
+import { MatIconModule } from "@angular/material/icon";
+import { TramitesService } from "../services/tramites";
+import { FCT } from "../models/tramite.models";
+import { MatInputModule } from "@angular/material/input";
+import { MatFormFieldModule } from "@angular/material/form-field";
+import { FormsModule } from "@angular/forms";
 
 @Component({
-  selector: 'app-fct-crud',
+  selector: "app-fct-crud",
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [CommonModule, ReactiveFormsModule, MatIconModule],
+  imports: [
+    CommonModule,
+    ReactiveFormsModule,
+    MatIconModule,
+    MatInputModule,
+    MatFormFieldModule,
+    FormsModule,
+  ],
   template: `
     <div class="space-y-6">
-
       <!-- Header & Stats Summary -->
-      <div class="bg-white rounded-2xl p-6 border border-slate-200/80 shadow-xs">
-        <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+      <div
+        class="bg-white rounded-2xl p-6 border border-slate-200/80 shadow-xs"
+      >
+        <div
+          class="flex flex-col md:flex-row md:items-center justify-between gap-4"
+        >
+        
           <div>
             <div class="flex items-center gap-2">
-              <span class="inline-flex items-center justify-center w-8 h-8 rounded-lg bg-blue-100 text-blue-700">
+              <span
+                class="inline-flex items-center justify-center w-8 h-8 rounded-lg bg-blue-100 text-blue-700"
+              >
                 <mat-icon class="text-lg">description</mat-icon>
               </span>
-              <h2 class="text-xl font-bold text-slate-900 tracking-tight">FCT — Ficha de Control de Trámites</h2>
+              <h2 class="text-xl font-bold text-slate-900 tracking-tight">
+                FTr — Crear - tabla para mostrar  (elementos del trámite FTR), llamado CET.  
+              </h2>
             </div>
             <p class="text-xs text-slate-500 mt-1 max-w-2xl">
-              Catálogo maestro de trámites, vigencias, dependencias jerárquicas y procesos generadores.
+
             </p>
           </div>
-
-          <div class="flex items-center gap-3">
-            <button
+           <button
               (click)="openCreateModal()"
               class="inline-flex items-center gap-2 px-4 py-2 text-xs font-semibold text-slate-700 bg-white hover:bg-slate-50 border border-slate-300 rounded-xl shadow-2xs transition-colors cursor-pointer"
             >
               <mat-icon class="text-base text-slate-500">add</mat-icon>
-              <span>Crear </span>
+              <span>Crear Trámite</span>
             </button>
           </div>
+          
         </div>
 
-        <!-- Quick Metrics KPI Row -->
-        <div class="grid grid-cols-2 sm:grid-cols-4 gap-4 mt-6 pt-6 border-t border-slate-100">
-          <div class="bg-slate-50 rounded-xl p-3 border border-slate-200/60">
-            <span class="text-[11px] font-medium text-slate-500 uppercase tracking-wider">Total Trámites FCT</span>
-            <div class="text-xl font-bold text-slate-900 mt-1">{{ totalFCTs() }}</div>
-          </div>
-          <div class="bg-emerald-50/60 rounded-xl p-3 border border-emerald-100">
-            <span class="text-[11px] font-medium text-emerald-700 uppercase tracking-wider">Activos en Vigencia</span>
-            <div class="text-xl font-bold text-emerald-700 mt-1">{{ totalActivos() }}</div>
-          </div>
-          <div class="bg-amber-50/60 rounded-xl p-3 border border-amber-100">
-            <span class="text-[11px] font-medium text-amber-700 uppercase tracking-wider">Inactivos / Bajas</span>
-            <div class="text-xl font-bold text-amber-700 mt-1">{{ totalInactivos() }}</div>
-          </div>
-          <div class="bg-blue-50/60 rounded-xl p-3 border border-blue-100">
-            <span class="text-[11px] font-medium text-blue-700 uppercase tracking-wider">Empresas Registradas</span>
-            <div class="text-xl font-bold text-blue-700 mt-1">{{ totalEmpresas() }}</div>
-          </div>
-        </div>
-      </div>
-
-      <!-- 2. Leer / Consultar FCT: 2.1 Búsqueda y 2.2 Filtros -->
-      <div class="bg-white rounded-2xl border border-slate-200/80 shadow-xs p-5 space-y-4">
         
-        <!-- Search Bar Row -->
-        <div class="flex flex-col md:flex-row items-stretch md:items-center justify-between gap-3">
-          <!-- 2.1 Búsqueda Rápida -->
-          <div class="relative flex-1">
-            <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none">
-              <mat-icon class="text-slate-400 text-lg">search</mat-icon>
-            </div>
-            <input
-              type="text"
-              [value]="filtroBusqueda()"
-              (input)="onSearchInput($event)"
-              placeholder="2.1 Buscar por Código (ej. FCT-SOL-001), descripción, empresa o tipo..."
-              class="w-full pl-10 pr-4 py-2 bg-slate-50/80 hover:bg-slate-50 focus:bg-white text-xs border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all placeholder:text-slate-400"
-            />
-            @if (filtroBusqueda()) {
-              <button
-                (click)="filtroBusqueda.set('')"
-                class="absolute inset-y-0 right-0 pr-3 flex items-center text-slate-400 hover:text-slate-600 cursor-pointer"
-              >
-                <mat-icon class="text-base">close</mat-icon>
-              </button>
-            }
-          </div>
+      <!-- 2. Leer / Consultar FCT: 2.1 Búsqueda y 2.2 Filtros -->
+      <div
+        class="bg-white rounded-2xl border border-slate-200/80 shadow-xs p-5 space-y-4"
+      >
 
-          <!-- 2.2 Toggle Filtros Avanzados -->
-          <div class="flex items-center gap-2">
-            <button
-              (click)="toggleFiltrosAvanzados()"
-              [class]="filtrosAbiertos() ? 'bg-blue-50 text-blue-700 border-blue-200' : 'bg-white text-slate-700 border-slate-200'"
-              class="inline-flex items-center gap-1.5 px-3 py-2 text-xs font-medium border rounded-xl hover:bg-slate-50 shadow-2xs transition-colors cursor-pointer"
-            >
-              <mat-icon class="text-base">tune</mat-icon>
-              <span>2.2 Filtros Avanzados</span>
-              @if (filtrosActivosCount() > 0) {
-                <span class="ml-1 px-1.5 py-0.5 rounded-full text-[10px] font-bold bg-blue-600 text-white">
-                  {{ filtrosActivosCount() }}
-                </span>
-              }
-            </button>
+ 
 
-            @if (filtrosActivosCount() > 0 || filtroBusqueda()) {
-              <button
-                (click)="limpiarFiltros()"
-                class="inline-flex items-center gap-1 px-2.5 py-2 text-xs text-rose-600 hover:bg-rose-50 border border-transparent rounded-xl transition-colors cursor-pointer"
-                title="Limpiar todos los filtros"
-              >
-                <mat-icon class="text-sm">filter_alt_off</mat-icon>
-                <span class="hidden sm:inline">Limpiar</span>
-              </button>
-            }
-          </div>
-        </div>
-
-        <!-- 2.2 Panel de Filtros Desplegable -->
-        @if (filtrosAbiertos()) {
-          <div class="bg-slate-50/70 border border-slate-200/80 rounded-xl p-4 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3 pt-3">
-            <!-- Filtro Empresa CdgEm -->
-            <div>
-              <label class="block text-[11px] font-semibold text-slate-600 mb-1">CdgEm (Empresa)</label>
-              <select
-                [value]="filtroEmpresa()"
-                (change)="filtroEmpresa.set($any($event.target).value)"
-                class="w-full bg-white text-xs border border-slate-300 rounded-lg px-2.5 py-1.5 outline-none focus:ring-1 focus:ring-blue-500"
-              >
-                <option value="">Todas las empresas</option>
-                <option value="EMP01">EMP01 - Matriz Central</option>
-                <option value="EMP02">EMP02 - Sucursal Regional</option>
-              </select>
-            </div>
-
-            <!-- Filtro Tipo -->
-            <div>
-              <label class="block text-[11px] font-semibold text-slate-600 mb-1">Tipo de Formulario</label>
-              <select
-                [value]="filtroTipo()"
-                (change)="filtroTipo.set($any($event.target).value)"
-                class="w-full bg-white text-xs border border-slate-300 rounded-lg px-2.5 py-1.5 outline-none focus:ring-1 focus:ring-blue-500"
-              >
-                <option value="">Todos los tipos</option>
-                <option value="SOLICITUD">SOLICITUD</option>
-                <option value="LIQUIDACION">LIQUIDACION</option>
-                <option value="DECLARACION">DECLARACION</option>
-                <option value="REGISTRO">REGISTRO</option>
-                <option value="NOTIFICACION">NOTIFICACION</option>
-              </select>
-            </div>
-
-            <!-- Filtro Estado -->
-            <div>
-              <label class="block text-[11px] font-semibold text-slate-600 mb-1">Estado</label>
-              <select
-                [value]="filtroEstado()"
-                (change)="filtroEstado.set($any($event.target).value)"
-                class="w-full bg-white text-xs border border-slate-300 rounded-lg px-2.5 py-1.5 outline-none focus:ring-1 focus:ring-blue-500"
-              >
-                <option value="">Todos los estados</option>
-                <option value="ACTIVO">ACTIVO</option>
-                <option value="INACTIVO">INACTIVO</option>
-              </select>
-            </div>
-
-            <!-- Filtro Fecha Desde -->
-            <div>
-              <label class="block text-[11px] font-semibold text-slate-600 mb-1">Vigencia Desde</label>
-              <input
-                type="date"
-                [value]="filtroFechaDesde()"
-                (change)="filtroFechaDesde.set($any($event.target).value)"
-                class="w-full bg-white text-xs border border-slate-300 rounded-lg px-2 py-1 outline-none focus:ring-1 focus:ring-blue-500"
-              />
-            </div>
-
-            <!-- Filtro Fecha Hasta -->
-            <div>
-              <label class="block text-[11px] font-semibold text-slate-600 mb-1">Vigencia Hasta</label>
-              <input
-                type="date"
-                [value]="filtroFechaHasta()"
-                (change)="filtroFechaHasta.set($any($event.target).value)"
-                class="w-full bg-white text-xs border border-slate-300 rounded-lg px-2 py-1 outline-none focus:ring-1 focus:ring-blue-500"
-              />
-            </div>
-          </div>
-        }
-
-        <!-- 2. Tabla de FCTs (Diseño Blanco Puro y Alta Densidad) -->
+        <!-- 1. Tabla de elentos de FTR -->
         <div class="overflow-x-auto rounded-xl border border-slate-200">
-          <table class="min-w-full divide-y divide-slate-200 text-left text-xs bg-white">
-            <thead class="bg-slate-50/90 text-slate-600 font-semibold uppercase tracking-wider text-[11px]">
+          <table
+            class="min-w-full divide-y divide-slate-200 text-left text-xs bg-white"
+          >
+            <thead
+              class="bg-slate-50/90 text-slate-600 font-semibold uppercase tracking-wider text-[11px]"
+            >
               <tr>
-                <th scope="col" class="py-3 px-3.5">Código </th>
-                <th scope="col" class="py-3 px-3.5">Tipo de producto crédito</th>
-                <th scope="col" class="py-3 px-3.5">Producto de crédito</th>
-                <th scope="col" class="py-3 px-3.5">Producto de ahorro</th>
-                <th scope="col" class="py-3 px-3.5">Tipo</th>
-                <th scope="col" class="py-3 px-3.5">Inico de vigencia</th>
-                <th scope="col" class="py-3 px-3.5">Fin de vigencia</th>
-                <th scope="col" class="py-3 px-3.5 text-right">Acciones</th>
+              <th scope="col" class="py-3 px-3">Código</th>
+                  <th scope="col" class="py-3 px-3">Tipo</th>
+                  <th scope="col" class="py-3 px-3.5">Nombre</th>
               </tr>
             </thead>
             <tbody class="divide-y divide-slate-100 font-normal text-slate-700">
-              @for (item of fctFiltrados(); track item.Codigo) {
+              @for (item of fctFiltrados(); track item) {
                 <tr
                   [class.bg-blue-50]="service.selectedFCTCode() === item.Codigo"
                   class="hover:bg-slate-50/80 transition-colors"
                 >
-                  <!-- CdgEm --
-                  <td class="py-3 px-3.5 font-mono text-[11px] font-semibold text-slate-600 whitespace-nowrap">
-                    <span class="inline-flex items-center px-2 py-0.5 rounded bg-slate-100 text-slate-700 border border-slate-200">
-                      {{ item.CdgEm }}
-                    </span>
-                  </td>-->
+          
 
-                  <!-- Codigo -->
-                  <td class="py-3 px-3.5 font-mono text-xs font-bold text-blue-700 whitespace-nowrap">
-                    <div class="flex items-center gap-1.5">
-                      <button
-                        (click)="selectAndNavigateCFT(item.Codigo)"
-                        title="Seleccionar trámite y ver campos"
-                        class="hover:underline flex items-center gap-1 text-blue-700 font-semibold cursor-pointer"
-                      >
-                        {{ item.Codigo }}
-                      </button>
-                      @if (service.selectedFCTCode() === item.Codigo) {
-                        <span class="w-2 h-2 rounded-full bg-blue-600" title="Trámite activo en sesión"></span>
-                      }
-                    </div>
-                  </td>
+               <!-- Código -->
+                    <td class="py-3 px-3.5 max-w-xs">
+                      <span class="text-[10px] text-slate-400 block truncate">
+                        Ej. Codigo-001
+                      </span>
+                    </td>
 
                   <!-- Tipo -->
-                  <td class="py-3 px-3.5 whitespace-nowrap">
-                    <span class="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-semibold border bg-slate-100 text-slate-800 border-slate-200">
-                      {{ item.Tipo }}
-                    </span>
-                  </td>
+                    <td class="py-3 px-3.5 max-w-xs">
+                      <span class="text-[10px] text-slate-400 block truncate">
+                        Ej. Crédiro
+                      </span>
+                    </td>
 
-                  <!-- CdgTpc -->
-                  <td class="py-3 px-3.5 whitespace-nowrap text-[11px] font-mono text-slate-600">
-                    {{ item.CdgTpc }}
-                  </td>
+                  <!-- Nombre -->
+                    <td class="py-3 px-3.5 max-w-xs">
+                      <span class="text-[10px] text-slate-400 block truncate">
+                        Ej. Nombre
+                      </span>
+                    </td>
 
-                  <!-- CgdPCr -->
-                  <td class="py-3 px-3.5 whitespace-nowrap text-[11px] font-mono text-slate-600">
-                    {{ item.CdgPCr }}
-                  </td>
 
-                  <!-- CdgPH -->
-                  <td class="py-3 px-3.5 whitespace-nowrap text-[11px] font-mono text-slate-600">
-                    {{ item.CodigoPH || '—' }}
-                  </td>
-
-                  <!-- Creacion 
-                  <td class="py-3 px-3.5 whitespace-nowrap text-[11px] font-mono text-slate-600">
-                    {{ item.Creacion }}
-                  </td>-->
-
-                  <!-- CdgPe -
-                  <td class="py-3 px-3.5 whitespace-nowrap text-[11px] font-mono text-slate-600">
-                    <span class="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] bg-slate-50 text-slate-600 border border-slate-200">
-                      {{ item.CdgPe }}
-                    </span>
-                  </td>-->
-
-                  <!-- Desde -->
-                  <td class="py-3 px-3.5 whitespace-nowrap text-[11px] text-slate-600">
-                    <div class="flex items-center gap-1">
-                      <mat-icon class="text-xs text-slate-400">calendar_today</mat-icon>
-                      <span>{{ item.Desde }}</span>
-                    </div>
-                  </td>
-
-                  <!-- Hasta -->
-                  <td class="py-3 px-3.5 whitespace-nowrap text-[11px] text-slate-600">
-                    <div class="flex items-center gap-1">
-                      <mat-icon class="text-xs text-slate-400">event</mat-icon>
-                      <span>{{ item.Hasta || '—' }}</span>
-                    </div>
-                  </td>
-
-                  <!-- Acciones -->
+                  <!-- Acciones --
                   <td class="py-3 px-3.5 text-right whitespace-nowrap">
                     <div class="flex items-center justify-end gap-1">
-                      <!-- 3. Editar FCT -->
+                      <!-- 3. Editar FCT --
                       <button
                         (click)="openEditModal(item)"
                         title="3. Modificar FCT (Código bloqueado)"
                         class="p-1 text-slate-500 hover:text-amber-600 hover:bg-amber-50 rounded-lg transition-colors cursor-pointer"
                       >
                         <mat-icon class="text-base">edit</mat-icon>
-                      </button>
+                      </button>-.>
 
-                      <!-- 4. Eliminar / Inactivar FCT -->
+                      <!-- 4. Eliminar / Inactivar FCT --
                       <button
                         (click)="openDeleteModal(item)"
                         title="4. Inactivar o Eliminar FCT"
@@ -302,14 +139,21 @@ import { FCT } from '../models/tramite.models';
                         <mat-icon class="text-base">delete_outline</mat-icon>
                       </button>
                     </div>
-                  </td>
+                  </td>-->
                 </tr>
               } @empty {
                 <tr>
                   <td colspan="11" class="py-12 text-center text-slate-400">
-                    <div class="flex flex-col items-center justify-center gap-2">
-                      <mat-icon class="text-4xl text-slate-300">search_off</mat-icon>
-                      <p class="text-sm font-medium text-slate-600">No se encontraron trámites con los filtros especificados.</p>
+                    <div
+                      class="flex flex-col items-center justify-center gap-2"
+                    >
+                      <mat-icon class="text-4xl text-slate-300"
+                        >search_off</mat-icon
+                      >
+                      <p class="text-sm font-medium text-slate-600">
+                        No se encontraron trámites con los filtros
+                        especificados.
+                      </p>
                       <button
                         (click)="limpiarFiltros()"
                         class="mt-1 text-xs text-blue-600 hover:underline cursor-pointer"
@@ -324,29 +168,71 @@ import { FCT } from '../models/tramite.models';
           </table>
         </div>
 
-        <div class="flex items-center justify-between text-xs text-slate-500 pt-2 px-1">
-          <span>Mostrando {{ fctFiltrados().length }} de {{ service.fctList().length }} trámites FCT</span>
-          <span class="text-[11px] text-slate-400">Restricción: Códigos identificadores son inmutables en actualización</span>
-        </div>
 
+     
+
+        <div
+          class="flex items-center justify-between text-xs text-slate-500 pt-2 px-1"
+        >
+          <span
+            >Mostrando {{ fctFiltrados().length }} de
+            {{ service.fctList().length }} trámites FCT</span
+          >
+          <span class="text-[11px] text-slate-400"
+            >Restricción: Códigos identificadores son inmutables en
+            actualización</span
+          >
+        </div>
       </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
       <!-- ========================================== -->
       <!-- 1. MODAL: CREAR / 3. EDITAR FCT           -->
       <!-- ========================================== -->
       @if (modalFormOpen()) {
-        <div class="fixed inset-0 z-50 overflow-y-auto bg-slate-900/60 backdrop-blur-2xs flex items-center justify-center p-4">
-          <div class="bg-white rounded-2xl shadow-2xl border border-slate-200 max-w-2xl w-full overflow-hidden animate-in fade-in zoom-in-95 duration-150">
-            
+        <div
+          class="fixed inset-0 z-50 overflow-y-auto bg-slate-900/60 backdrop-blur-2xs flex items-center justify-center p-4"
+        >
+          <div
+            class="bg-white rounded-2xl shadow-2xl border border-slate-200 max-w-2xl w-full overflow-hidden animate-in fade-in zoom-in-95 duration-150"
+          >
             <!-- Modal Header -->
-            <div class="px-6 py-4 border-b border-slate-100 flex items-center justify-between bg-slate-50/50">
+            <div
+              class="px-6 py-4 border-b border-slate-100 flex items-center justify-between bg-slate-50/50"
+            >
               <div class="flex items-center gap-2.5">
-                <div [class]="isEditing() ? 'bg-amber-100 text-amber-700' : 'bg-blue-100 text-blue-700'" class="w-8 h-8 rounded-lg flex items-center justify-center">
-                  <mat-icon class="text-lg">{{ isEditing() ? 'edit_note' : 'post_add' }}</mat-icon>
+                <div
+                  [class]="
+                    isEditing()
+                      ? 'bg-amber-100 text-amber-700'
+                      : 'bg-blue-100 text-blue-700'
+                  "
+                  class="w-8 h-8 rounded-lg flex items-center justify-center"
+                >
+                  <mat-icon class="text-lg">{{
+                    isEditing() ? "edit_note" : "post_add"
+                  }}</mat-icon>
                 </div>
                 <div>
                   <h3 class="text-base font-bold text-slate-900">
-                    {{ isEditing() ? 'Editar ' : 'Crear ' }}
+                    {{ isEditing() ? "Editar Trámite" : "Crear Trámite" }}
                   </h3>
                 </div>
               </div>
@@ -361,8 +247,12 @@ import { FCT } from '../models/tramite.models';
 
             <!-- Validation Error Alert -->
             @if (formErrorMsg()) {
-              <div class="mx-6 mt-4 p-3 rounded-xl bg-rose-50 border border-rose-200 text-rose-800 text-xs flex items-start gap-2">
-                <mat-icon class="text-rose-600 text-base mt-0.5">error_outline</mat-icon>
+              <div
+                class="mx-6 mt-4 p-3 rounded-xl bg-rose-50 border border-rose-200 text-rose-800 text-xs flex items-start gap-2"
+              >
+                <mat-icon class="text-rose-600 text-base mt-0.5"
+                  >error_outline</mat-icon
+                >
                 <div>
                   <strong class="font-semibold">Error de validación:</strong>
                   <p class="mt-0.5">{{ formErrorMsg() }}</p>
@@ -371,28 +261,50 @@ import { FCT } from '../models/tramite.models';
             }
 
             <!-- Form Content -->
-            <form [formGroup]="fctForm" (ngSubmit)="saveFCT()" class="p-6 space-y-4">
-              
+            <form
+              [formGroup]="fctForm"
+              (ngSubmit)="saveFCT()"
+              class="p-6 space-y-4"
+            >
               <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                
                 <!-- Codigo (Identificador Único) -->
+                <div>
+                  <label
+                    class="block text-xs font-semibold text-slate-700 mb-1"
+                  >
+                    Codigo
+                  </label>
+                  <input
+                    type="text"
+                    formControlName=""
+                    placeholder="Ej.TRM-001"
+                    class="w-full text-xs font-mono uppercase bg-white border border-slate-300 rounded-xl px-3 py-2 outline-none focus:ring-2 focus:ring-blue-500"
+                  />
+                  <!-- @if (fctForm.get('Codigo')?.touched && fctForm.get('Codigo')?.invalid) {
+                    <p class="text-[10px] text-rose-600 mt-1">El código es obligatorio y debe tener al menos 3 caracteres.</p>
+          }-->
+                </div>
+
+                <!-- Codigo (Identificador Único) -
                 <div>
                   <label class="block text-xs font-semibold text-slate-700 mb-1">
                     Codigo
                   </label>
                   <input
                     type="text"
-                    formControlName="Codigo"
-                    placeholder="Ej. FCT-SOL-005"
+                    formControlName=""
+                    placeholder="Ej.TRM-001"
                     [attr.disabled]="isEditing() ? true : null"
                     [class.bg-slate-100]="isEditing()"
                     [class.cursor-not-allowed]="isEditing()"
                     class="w-full text-xs font-mono uppercase bg-white border border-slate-300 rounded-xl px-3 py-2 outline-none focus:ring-2 focus:ring-blue-500"
                   />
-                  @if (fctForm.get('Codigo')?.touched && fctForm.get('Codigo')?.invalid) {
+                 @if (fctForm.get('Codigo')?.touched && fctForm.get('Codigo')?.invalid) {
                     <p class="text-[10px] text-rose-600 mt-1">El código es obligatorio y debe tener al menos 3 caracteres.</p>
-                  }
+          }
                 </div>
+
+        -->
 
                 <!-- CdgEm 
                 <div>
@@ -409,7 +321,22 @@ import { FCT } from '../models/tramite.models';
                   </select>
                 </div>-->
 
-                <!-- CdgTpc -->
+                <!--  Nombre del Trámine -->
+                <div>
+                  <label
+                    class="block text-xs font-semibold text-slate-700 mb-1"
+                  >
+                    Nombre de trámite
+                  </label>
+                  <input
+                    type="text"
+                    formControlName="Trámite de cedula para la moto "
+                    placeholder="Ej. Trámite de celuda"
+                    class="w-full text-xs font-mono uppercase bg-white border border-slate-300 rounded-xl px-3 py-2 outline-none focus:ring-2 focus:ring-blue-500"
+                  />
+                </div>
+
+                <!-- CdgTpc --
                 <div>
                   <label class="block text-xs font-semibold text-slate-700 mb-1">
                     Tipo de producto de crédito
@@ -420,38 +347,122 @@ import { FCT } from '../models/tramite.models';
                     placeholder="Ej. TPC-SOLICITUD"
                     class="w-full text-xs font-mono uppercase bg-white border border-slate-300 rounded-xl px-3 py-2 outline-none focus:ring-2 focus:ring-blue-500"
                   />
-                </div>
+                </div>-->
+                <!-- Tipo --
 
-                <!-- CdgPCr -->
                 <div>
                   <label class="block text-xs font-semibold text-slate-700 mb-1">
-                    Producto de crédito
+                   Tipo
                   </label>
                   <input
                     type="text"
-                    formControlName="CdgPCr"
-                    placeholder="Ej. PCR-VENTANILLA-DIGITAL"
+                    formControlName="CdgTpc"
+                    placeholder="uuuuuuu"
                     class="w-full text-xs font-mono uppercase bg-white border border-slate-300 rounded-xl px-3 py-2 outline-none focus:ring-2 focus:ring-blue-500"
                   />
-                </div>
+                </div>-->
 
-                <!-- CodigoPH -->
+  <!------------- Tipo de crádito o ahorro 1 ------ --
                 <div>
-                  <label class="block text-xs font-semibold text-slate-700 mb-1">
-                    Producto de ahorro
+                  <label
+                    class="block text-[11px] font-semibold text-slate-600 mb-1"
+                    >Tipo
+                  </label>
+                  <select
+                    class="w-full text-xs bg-slate-50 border border-slate-300 rounded-lg px-2.5 py-1.5 outline-none focus:bg-white focus:ring-1 focus:ring-blue-500"
+                  >
+                    <option value="">Crédito</option>
+                    <option value="INPUT">Ahorro</option>
+                  </select>
+                </div>
+                <br />-->
+
+                <!-- Prodcto de créditos --
+
+                <div>
+                  <label
+                    class="block text-xs font-semibold text-slate-700 mb-1"
+                  >
+                    Producto de crédito:
+                  </label>
+                  <label
+                    class="block text-xs font-semibold text-slate-700 mb-1"
+                  >
+                    Código
+                  </label>
+                  <input
+                    type="text"
+                    formControlName=""
+                    placeholder="Ej. COD-CREDITO-001"
+                    class="w-full text-xs font-mono uppercase bg-white border border-slate-300 rounded-xl px-3 py-2 outline-none focus:ring-2 focus:ring-blue-500"
+                  />
+                </div>->
+                <!-- Producto de ahorros --
+                <div>
+                  <label
+                    class="block text-xs font-semibold text-slate-700 mb-1"
+                  >
+                    Producto de ahorros
+                  </label>
+                  <label
+                    class="block text-xs font-semibold text-slate-700 mb-1"
+                  >
+                    Código
+                  </label>
+                  <input
+                    type="text"
+                    formControlName="CdgTpc"
+                    placeholder="Ej. COD-Ahorros-001 "
+                    class="w-full text-xs font-mono uppercase bg-white border border-slate-300 rounded-xl px-3 py-2 outline-none focus:ring-2 focus:ring-blue-500"
+                  />
+                </div>-->
+
+  <!------------------- Tipo crédito  2--
+                <div>
+                  <label
+                    class="block text-[11px] font-semibold text-slate-600 mb-1"
+                    >Tipo
+                  </label>
+                  <select
+                    class="w-full text-xs bg-slate-50 border border-slate-300 rounded-lg px-2.5 py-1.5 outline-none focus:bg-white focus:ring-1 focus:ring-blue-500"
+                  >
+                    <option value="">Crédito</option>
+                    <option value="INPUT">Ahorro</option>
+                  </select>
+                </div>-->
+                
+
+                <!--  <td><mat-form-field class="example-full-width">
+      <mat-label>City</mat-label>
+      <input matInput placeholder="Ex. San Francisco">
+    </mat-form-field></td>
+    <td><mat-form-field class="example-full-width">
+      <mat-label>State</mat-label>
+      <input matInput placeholder="Ex. California">
+    </mat-form-field></td>
+    <td><mat-form-field class="example-full-width">
+      <mat-label>Postal Code</mat-label>
+      <input matInput #postalCode maxlength="5" placeholder="Ex. 94105" value="94043">
+    </mat-form-field></td> -->
+                <!-- CodigoPH --
+                <div>
+                  <label
+                    class="block text-xs font-semibold text-slate-700 mb-1"
+                  >
+                    Nombre del ahorro
                   </label>
                   <input
                     type="text"
                     formControlName="CodigoPH"
-                    placeholder="Ej. PH-ROOT-001"
+                    placeholder="Ej. Nombre del PAh"
                     class="w-full text-xs font-mono uppercase bg-white border border-slate-300 rounded-xl px-3 py-2 outline-none focus:ring-2 focus:ring-blue-500"
                   />
-                </div>
+                </div>-->
 
-                <!-- Tipo -->
+                <!-- Código -
                 <div>
                   <label class="block text-xs font-semibold text-slate-700 mb-1">
-                    Tipo
+                    Código
                   </label>
                   <select
                     formControlName="Tipo"
@@ -464,6 +475,38 @@ import { FCT } from '../models/tramite.models';
                     <option value="NOTIFICACION">NOTIFICACION</option>
                   </select>
                 </div>
+          -->
+                <!-- Producto de créditos   --
+                <div>
+                  <label
+                    class="block text-xs font-semibold text-slate-700 mb-1"
+                  >
+                    Nombre de crédito
+                  </label>
+                  <input
+                    type="text"
+                    formControlName="CodigoPH"
+                    placeholder="Ej. Nombre del PCr  "
+                    class="w-full text-xs font-mono uppercase bg-white border border-slate-300 rounded-xl px-3 py-2 outline-none focus:ring-2 focus:ring-blue-500"
+                  />
+                </div>-->
+
+                <!-- Tipo 
+                <div>
+                  <label class="block text-xs font-semibold text-slate-700 mb-1">
+                    Tipo hh
+                  </label>
+                  <select
+                    formControlName="Tipo"
+                    class="w-full text-xs bg-white border border-slate-300 rounded-xl px-3 py-2 outline-none focus:ring-2 focus:ring-blue-500"
+                  >
+                    <option value="SOLICITUD">SOLICITUD</option>
+                    <option value="LIQUIDACION">LIQUIDACION</option>
+                    <option value="DECLARACION">DECLARACION</option>
+                    <option value="REGISTRO">REGISTRO</option>
+                    <option value="NOTIFICACION">NOTIFICACION</option>
+                  </select>
+                </div>->
 
                 <!-- CdgPe 
                 <div>
@@ -494,7 +537,7 @@ import { FCT } from '../models/tramite.models';
                   />
                 </div>-->
 
-                <!-- Desde -->
+                <!-- Desde --
                 <div>
                   <label class="block text-xs font-semibold text-slate-700 mb-1">
                     Inico de vigencia
@@ -505,23 +548,163 @@ import { FCT } from '../models/tramite.models';
                     class="w-full text-xs bg-white border border-slate-300 rounded-xl px-3 py-2 outline-none focus:ring-2 focus:ring-blue-500"
                   />
                 </div>
+          <div class="flex items-center gap-3">-->
 
-                <!-- Hasta -->
+  <!------------------------ . -->
+
+                <!-- Hasta --
                 <div>
-                  <label class="block text-xs font-semibold text-slate-700 mb-1">
-                    Fin de vigencia
+                  <label
+                    class="block text-xs font-semibold text-slate-700 mb-1"
+                  >
+                    Vigencia
                   </label>
                   <input
                     type="date"
                     formControlName="Hasta"
                     class="w-full text-xs bg-white border border-slate-300 rounded-xl px-3 py-2 outline-none focus:ring-2 focus:ring-blue-500"
                   />
-                </div>
-
+                </div>-->
               </div>
 
+
+                 
+
+          <!-- DOS COLUMNAS: COLUMNA 1 (Producto de crédito) Y COLUMNA 2 (Producto de ahorro) -->
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <!-- COLUMNA 1: Producto de crédito (Vertical) -->
+            <div class="p-4 bg-zinc-50/70 border border-zinc-200 rounded-xl space-y-3 shadow-2xs">
+              <div class="flex items-center gap-2 pb-2 border-b border-zinc-200">
+                <mat-icon class="text-base text-zinc-700">credit_card</mat-icon>
+                <h4 class="text-xs font-bold text-zinc-900 uppercase tracking-wider"> Producto de crédito</h4>
+              </div>
+
+              <div class="flex flex-col gap-3">
+                <!-- 1. Tipo   -->
+                <div>
+                  <label
+                    class="block text-[11px] font-semibold text-slate-600 mb-1"
+                    >Tipo
+                  </label>
+                  <select
+                    class="w-full text-xs bg-slate-50 border border-slate-300 rounded-lg px-2.5 py-1.5 outline-none focus:bg-white focus:ring-1 focus:ring-blue-500"
+                  >
+                    <option value="">Crédito</option>
+                    <option value="INPUT">Ahorro</option>
+                  </select>
+                </div>
+
+                <!-- 2. Código -->
+                <div>
+                  <label for="editar-credito-codigo" class="block text-xs font-semibold text-slate-700 mb-1"> 
+                   Código
+                  </label>
+                  <input
+                    id="editar-credito-codigo"
+                    type="text"
+                    formControlName="creditoCodigo"
+                    placeholder="Ej: CRED-001"
+                    class="w-full text-xs bg-slate-50 border border-slate-300 rounded-lg px-2.5 py-1.5 outline-none focus:bg-white focus:ring-1 focus:ring-blue-500"
+                  />
+                </div>
+
+                <!-- 3. Nombre -->
+                <div>
+                  <label for="editar-credito-nombre" class="block text-xs font-semibold text-slate-700 mb-1">
+                    Nombre
+                  </label>
+                  <input
+                    id="editar-credito-nombre"
+                    type="text"
+                    formControlName="creditoNombre"
+                    placeholder="Ej: Crédito de Libre Inversión"
+                    class="w-full text-xs bg-slate-50 border border-slate-300 rounded-lg px-2.5 py-1.5 outline-none focus:bg-white focus:ring-1 focus:ring-blue-500"
+                  />
+                </div>
+              </div>
+            </div>
+            <!-- COLUMNA 2: Producto de ahorro (Vertical) -->
+            <div class="p-4 bg-zinc-50/70 border border-zinc-200 rounded-xl space-y-3 shadow-2xs">
+              <div class="flex items-center gap-2 pb-2 border-b border-zinc-200">
+                <mat-icon class="text-base text-zinc-700">savings</mat-icon>
+                <h4 class="text-xs font-bold text-zinc-900 uppercase tracking-wider">Producto de ahorro</h4>
+              </div>
+
+              <div class="flex flex-col gap-3">
+                <!-- 1. Código -->
+                <div>
+                  <label for="editar-ahorro-codigo"class="block text-xs font-semibold text-slate-700 mb-1">
+                    Código
+                  </label>
+                  <input
+                    id="editar-ahorro-codigo"
+                    type="text"
+                    formControlName="ahorroCodigo"
+                    placeholder="Ej: AHO-001"
+                    class="w-full text-xs bg-slate-50 border border-slate-300 rounded-lg px-2.5 py-1.5 outline-none focus:bg-white focus:ring-1 focus:ring-blue-500"
+                  />
+                </div>
+
+                <!-- 2. Nombre -->
+                <div>
+                  <label for="editar-ahorro-nombre" class="block text-xs font-semibold text-slate-700 mb-1">
+                Nombre
+                </label>
+                  <input
+                    id="editar-ahorro-nombre"
+                    type="text"
+                    formControlName="ahorroNombre"
+                    placeholder="Ej: Cuenta de Ahorro Contractual"
+                    class="w-full text-xs bg-slate-50 border border-slate-300 rounded-lg px-2.5 py-1.5 outline-none focus:bg-white focus:ring-1 focus:ring-blue-500"
+                  />
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- RECUADRO 3 (Debajo): Vigencia -->
+          <div class="p-4 bg-zinc-50/70 border border-zinc-200 rounded-xl space-y-3 shadow-2xs">
+            <div class="flex items-center gap-2 pb-2 border-b border-zinc-200">
+              <mat-icon class="text-base text-zinc-700">date_range</mat-icon>
+              <h4 class="text-xs font-bold text-zinc-900 uppercase tracking-wider">Vigencia</h4>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              <!-- 1. Desde -->
+              <div>
+                <label for="editar-vigencia-desde" class="block text-xs font-semibold text-zinc-700 mb-1">
+                  Desde
+                </label>
+                <input
+                  id="editar-vigencia-desde"
+                  type="date"
+                  formControlName="vigenciaDesde"
+                  class="w-full px-3 py-2 bg-white border border-zinc-300 rounded-lg text-xs text-zinc-900 focus:outline-none focus:ring-2 focus:ring-zinc-400 shadow-2xs cursor-pointer"
+                />
+              </div>
+
+              <!-- 2. Hasta -->
+              <div> 
+                <label for="editar-vigencia-hasta" class="block text-xs font-semibold text-zinc-700 mb-1">
+                  Hasta
+                </label>
+                <input
+                  id="editar-vigencia-hasta"
+                  type="date"
+                  formControlName="vigenciaHasta"
+                    class="w-full text-xs font-mono uppercase bg-white border border-slate-300 rounded-xl px-3 py-2 outline-none focus:ring-2 focus:ring-blue-500"
+                /> 
+          
+              </div>
+            </div>
+          </div>
+
+
+
               <!-- Footer Buttons -->
-              <div class="pt-4 border-t border-slate-100 flex items-center justify-end gap-3">
+              <div
+                class="pt-4 border-t border-slate-100 flex items-center justify-end gap-3"
+              >
                 <button
                   type="button"
                   (click)="closeFormModal()"
@@ -537,28 +720,55 @@ import { FCT } from '../models/tramite.models';
                   Aceptar
                 </button>
               </div>
-
             </form>
-
           </div>
         </div>
       }
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      
       <!-- ========================================== -->
       <!-- 2.3 MODAL DETALLE DE FCT                   -->
       <!-- ========================================== -->
       @if (detalleModalItem(); as item) {
-        <div class="fixed inset-0 z-50 overflow-y-auto bg-slate-900/60 backdrop-blur-2xs flex items-center justify-center p-4">
-          <div class="bg-white rounded-2xl shadow-2xl border border-slate-200 max-w-2xl w-full overflow-hidden animate-in fade-in zoom-in-95 duration-150">
-            
-            <div class="px-6 py-4 border-b border-slate-100 flex items-center justify-between bg-slate-50/50">
+        <div
+          class="fixed inset-0 z-50 overflow-y-auto bg-slate-900/60 backdrop-blur-2xs flex items-center justify-center p-4"
+        >
+          <div
+            class="bg-white rounded-2xl shadow-2xl border border-slate-200 max-w-2xl w-full overflow-hidden animate-in fade-in zoom-in-95 duration-150"
+          >
+            <div
+              class="px-6 py-4 border-b border-slate-100 flex items-center justify-between bg-slate-50/50"
+            >
               <div class="flex items-center gap-2.5">
-                <div class="w-8 h-8 rounded-lg bg-blue-100 text-blue-700 flex items-center justify-center">
+                <div
+                  class="w-8 h-8 rounded-lg bg-blue-100 text-blue-700 flex items-center justify-center"
+                >
                   <mat-icon class="text-lg">info</mat-icon>
                 </div>
                 <div>
-                  <h3 class="text-base font-bold text-slate-900">2.3 Ficha Técnica Detallada — FCT</h3>
-                  <p class="text-[11px] text-slate-500 font-mono">{{ item.Codigo }}</p>
+                  <h3 class="text-base font-bold text-slate-900">
+                    2.3 Ficha Técnica Detallada — FCT
+                  </h3>
+                  <p class="text-[11px] text-slate-500 font-mono">
+                    {{ item.Codigo }}
+                  </p>
                 </div>
               </div>
 
@@ -571,22 +781,35 @@ import { FCT } from '../models/tramite.models';
             </div>
 
             <div class="p-6 space-y-5">
-              
               <!-- Quick Info Badge Banner -->
-              <div class="flex items-center justify-between p-3 rounded-xl bg-slate-50 border border-slate-200/80">
+              <div
+                class="flex items-center justify-between p-3 rounded-xl bg-slate-50 border border-slate-200/80"
+              >
                 <div>
-                  <span class="text-[11px] text-slate-500 block">Denominación</span>
-                  <h4 class="text-sm font-bold text-slate-900">{{ item.Descripcion }}</h4>
+                  <span class="text-[11px] text-slate-500 block"
+                    >Denominación</span
+                  >
+                  <h4 class="text-sm font-bold text-slate-900">
+                    {{ item.Descripcion }}
+                  </h4>
                 </div>
                 <div>
-                  @if (item.Estado === 'ACTIVO') {
-                    <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200">
-                      <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 mr-1.5"></span>
+                  @if (item.Estado === "ACTIVO") {
+                    <span
+                      class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200"
+                    >
+                      <span
+                        class="w-1.5 h-1.5 rounded-full bg-emerald-500 mr-1.5"
+                      ></span>
                       ACTIVO
                     </span>
                   } @else {
-                    <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold bg-rose-50 text-rose-700 border border-rose-200">
-                      <span class="w-1.5 h-1.5 rounded-full bg-rose-500 mr-1.5"></span>
+                    <span
+                      class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold bg-rose-50 text-rose-700 border border-rose-200"
+                    >
+                      <span
+                        class="w-1.5 h-1.5 rounded-full bg-rose-500 mr-1.5"
+                      ></span>
                       INACTIVO
                     </span>
                   }
@@ -595,55 +818,120 @@ import { FCT } from '../models/tramite.models';
 
               <!-- Technical Fields Grid -->
               <div class="grid grid-cols-2 sm:grid-cols-3 gap-3 text-xs">
-                <div class="p-2.5 rounded-lg bg-slate-50/60 border border-slate-100">
-                  <span class="text-[10px] text-slate-400 uppercase font-semibold">CdgEm (Empresa)</span>
-                  <p class="font-bold font-mono text-slate-800 mt-0.5">{{ item.CdgEm }}</p>
+                <div
+                  class="p-2.5 rounded-lg bg-slate-50/60 border border-slate-100"
+                >
+                  <span
+                    class="text-[10px] text-slate-400 uppercase font-semibold"
+                    >CdgEm (Empresa)</span
+                  >
+                  <p class="font-bold font-mono text-slate-800 mt-0.5">
+                    {{ item.CdgEm }}
+                  </p>
                 </div>
 
-                <div class="p-2.5 rounded-lg bg-slate-50/60 border border-slate-100">
-                  <span class="text-[10px] text-slate-400 uppercase font-semibold">Tipo Formulario</span>
+                <div
+                  class="p-2.5 rounded-lg bg-slate-50/60 border border-slate-100"
+                >
+                  <span
+                    class="text-[10px] text-slate-400 uppercase font-semibold"
+                    >Tipo Formulario</span
+                  >
                   <p class="font-bold text-slate-800 mt-0.5">{{ item.Tipo }}</p>
                 </div>
 
-                <div class="p-2.5 rounded-lg bg-slate-50/60 border border-slate-100">
-                  <span class="text-[10px] text-slate-400 uppercase font-semibold">CdgPe (Período)</span>
-                  <p class="font-bold text-slate-800 mt-0.5">{{ item.CdgPe }}</p>
+                <div
+                  class="p-2.5 rounded-lg bg-slate-50/60 border border-slate-100"
+                >
+                  <span
+                    class="text-[10px] text-slate-400 uppercase font-semibold"
+                    >CdgPe (Período)</span
+                  >
+                  <p class="font-bold text-slate-800 mt-0.5">
+                    {{ item.CdgPe }}
+                  </p>
                 </div>
 
-                <div class="p-2.5 rounded-lg bg-slate-50/60 border border-slate-100">
-                  <span class="text-[10px] text-slate-400 uppercase font-semibold">CdgTpc (Tipo Proceso)</span>
-                  <p class="font-bold font-mono text-slate-800 mt-0.5">{{ item.CdgTpc }}</p>
+                <div
+                  class="p-2.5 rounded-lg bg-slate-50/60 border border-slate-100"
+                >
+                  <span
+                    class="text-[10px] text-slate-400 uppercase font-semibold"
+                    >CdgTpc (Tipo Proceso)</span
+                  >
+                  <p class="font-bold font-mono text-slate-800 mt-0.5">
+                    {{ item.CdgTpc }}
+                  </p>
                 </div>
 
-                <div class="p-2.5 rounded-lg bg-slate-50/60 border border-slate-100">
-                  <span class="text-[10px] text-slate-400 uppercase font-semibold">CdgPCr (Creador)</span>
-                  <p class="font-bold font-mono text-slate-800 mt-0.5">{{ item.CdgPCr }}</p>
+                <div
+                  class="p-2.5 rounded-lg bg-slate-50/60 border border-slate-100"
+                >
+                  <span
+                    class="text-[10px] text-slate-400 uppercase font-semibold"
+                    >CdgPCr (Creador)</span
+                  >
+                  <p class="font-bold font-mono text-slate-800 mt-0.5">
+                    {{ item.CdgPCr }}
+                  </p>
                 </div>
 
-                <div class="p-2.5 rounded-lg bg-slate-50/60 border border-slate-100">
-                  <span class="text-[10px] text-slate-400 uppercase font-semibold">CodigoPH (Padre)</span>
-                  <p class="font-bold font-mono text-slate-800 mt-0.5">{{ item.CodigoPH || 'N/A' }}</p>
+                <div
+                  class="p-2.5 rounded-lg bg-slate-50/60 border border-slate-100"
+                >
+                  <span
+                    class="text-[10px] text-slate-400 uppercase font-semibold"
+                    >CodigoPH (Padre)</span
+                  >
+                  <p class="font-bold font-mono text-slate-800 mt-0.5">
+                    {{ item.CodigoPH || "N/A" }}
+                  </p>
                 </div>
 
-                <div class="p-2.5 rounded-lg bg-slate-50/60 border border-slate-100">
-                  <span class="text-[10px] text-slate-400 uppercase font-semibold">Fecha Creación</span>
-                  <p class="font-bold text-slate-800 mt-0.5">{{ item.Creacion }}</p>
+                <div
+                  class="p-2.5 rounded-lg bg-slate-50/60 border border-slate-100"
+                >
+                  <span
+                    class="text-[10px] text-slate-400 uppercase font-semibold"
+                    >Fecha Creación</span
+                  >
+                  <p class="font-bold text-slate-800 mt-0.5">
+                    {{ item.Creacion }}
+                  </p>
                 </div>
 
-                <div class="p-2.5 rounded-lg bg-slate-50/60 border border-slate-100">
-                  <span class="text-[10px] text-slate-400 uppercase font-semibold">Vigencia Desde</span>
-                  <p class="font-bold text-slate-800 mt-0.5">{{ item.Desde }}</p>
+                <div
+                  class="p-2.5 rounded-lg bg-slate-50/60 border border-slate-100"
+                >
+                  <span
+                    class="text-[10px] text-slate-400 uppercase font-semibold"
+                    >Vigencia Desde</span
+                  >
+                  <p class="font-bold text-slate-800 mt-0.5">
+                    {{ item.Desde }}
+                  </p>
                 </div>
 
-                <div class="p-2.5 rounded-lg bg-slate-50/60 border border-slate-100">
-                  <span class="text-[10px] text-slate-400 uppercase font-semibold">Vigencia Hasta</span>
-                  <p class="font-bold text-slate-800 mt-0.5">{{ item.Hasta }}</p>
+                <div
+                  class="p-2.5 rounded-lg bg-slate-50/60 border border-slate-100"
+                >
+                  <span
+                    class="text-[10px] text-slate-400 uppercase font-semibold"
+                    >Vigencia Hasta</span
+                  >
+                  <p class="font-bold text-slate-800 mt-0.5">
+                    {{ item.Hasta }}
+                  </p>
                 </div>
               </div>
 
               @if (item.MotivoInactivacion) {
-                <div class="p-3 bg-rose-50/70 border border-rose-200 rounded-xl text-xs text-rose-800">
-                  <span class="font-bold block">Motivo de Inactivación registrado:</span>
+                <div
+                  class="p-3 bg-rose-50/70 border border-rose-200 rounded-xl text-xs text-rose-800"
+                >
+                  <span class="font-bold block"
+                    >Motivo de Inactivación registrado:</span
+                  >
                   <p class="mt-0.5">{{ item.MotivoInactivacion }}</p>
                 </div>
               }
@@ -651,8 +939,12 @@ import { FCT } from '../models/tramite.models';
               <!-- Summary of Assigned CFT fields -->
               <div>
                 <div class="flex items-center justify-between mb-2">
-                  <h5 class="text-xs font-bold text-slate-800 flex items-center gap-1.5">
-                    <mat-icon class="text-sm text-blue-600">view_compact</mat-icon>
+                  <h5
+                    class="text-xs font-bold text-slate-800 flex items-center gap-1.5"
+                  >
+                    <mat-icon class="text-sm text-blue-600"
+                      >view_compact</mat-icon
+                    >
                     Campos CFT Asignados ({{ getCamposCount(item.Codigo) }})
                   </h5>
                   <button
@@ -663,29 +955,52 @@ import { FCT } from '../models/tramite.models';
                   </button>
                 </div>
 
-                <div class="max-h-40 overflow-y-auto rounded-xl border border-slate-200 bg-slate-50/40 p-2 space-y-1.5">
-                  @for (cft of getCFTsForItem(item.Codigo); track cft.Secuencia) {
-                    <div class="flex items-center justify-between text-xs bg-white p-2 rounded-lg border border-slate-200/60 shadow-2xs">
+                <div
+                  class="max-h-40 overflow-y-auto rounded-xl border border-slate-200 bg-slate-50/40 p-2 space-y-1.5"
+                >
+                  @for (
+                    cft of getCFTsForItem(item.Codigo);
+                    track cft.Secuencia
+                  ) {
+                    <div
+                      class="flex items-center justify-between text-xs bg-white p-2 rounded-lg border border-slate-200/60 shadow-2xs"
+                    >
                       <div class="flex items-center gap-2">
-                        <span class="w-5 h-5 rounded-full bg-slate-100 font-mono text-[10px] font-bold text-slate-600 flex items-center justify-center">
+                        <span
+                          class="w-5 h-5 rounded-full bg-slate-100 font-mono text-[10px] font-bold text-slate-600 flex items-center justify-center"
+                        >
                           {{ cft.Secuencia }}
                         </span>
-                        <span class="font-medium text-slate-800">{{ cft.Etiqueta }}</span>
-                        <span class="text-[10px] font-mono text-slate-400">{{ cft.CdgCET }}</span>
+                        <span class="font-medium text-slate-800">{{
+                          cft.Etiqueta
+                        }}</span>
+                        <span class="text-[10px] font-mono text-slate-400">{{
+                          cft.CdgCET
+                        }}</span>
                       </div>
-                      <span [class]="cft.Obligatoriedad === 'OBLIGATORIO' ? 'text-rose-600 bg-rose-50 border-rose-200' : 'text-slate-600 bg-slate-100 border-slate-200'" class="px-1.5 py-0.5 rounded text-[10px] font-semibold border">
+                      <span
+                        [class]="
+                          cft.Obligatoriedad === 'OBLIGATORIO'
+                            ? 'text-rose-600 bg-rose-50 border-rose-200'
+                            : 'text-slate-600 bg-slate-100 border-slate-200'
+                        "
+                        class="px-1.5 py-0.5 rounded text-[10px] font-semibold border"
+                      >
                         {{ cft.Obligatoriedad }}
                       </span>
                     </div>
                   } @empty {
-                    <p class="text-xs text-slate-400 text-center py-4">No tiene campos CFT asignados aún.</p>
+                    <p class="text-xs text-slate-400 text-center py-4">
+                      No tiene campos CFT asignados aún.
+                    </p>
                   }
                 </div>
               </div>
-
             </div>
 
-            <div class="px-6 py-3 border-t border-slate-100 flex items-center justify-end bg-slate-50/50">
+            <div
+              class="px-6 py-3 border-t border-slate-100 flex items-center justify-end bg-slate-50/50"
+            >
               <button
                 (click)="detalleModalItem.set(null)"
                 class="px-4 py-1.5 text-xs font-semibold text-slate-700 hover:bg-slate-100 rounded-xl cursor-pointer"
@@ -693,30 +1008,30 @@ import { FCT } from '../models/tramite.models';
                 Cerrar
               </button>
             </div>
-
           </div>
         </div>
-      }
+      } 
+
 
       <!-- ========================================== -->
       <!-- 4. MODAL: ELIMINAR / CONFIRMAR INACTIVACIÓN -->
       <!-- ========================================== -->
       @if (deleteModalItem(); as item) {
-        <div class="fixed inset-0 z-50 overflow-y-auto bg-slate-900/60 backdrop-blur-2xs flex items-center justify-center p-4">
-          <div class="bg-white rounded-2xl shadow-2xl border border-slate-200 max-w-md w-full overflow-hidden animate-in fade-in zoom-in-95 duration-150">
-            
+        <div
+          class="fixed inset-0 z-50 overflow-y-auto bg-slate-900/60 backdrop-blur-2xs flex items-center justify-center p-4"
+        >
+          <div
+            class="bg-white rounded-2xl shadow-2xl border border-slate-200 max-w-md w-full overflow-hidden animate-in fade-in zoom-in-95 duration-150"
+          >
             <div class="p-6">
-          
-              <h3 class="text-base font-bold text-slate-900 text-center">¿Está seguro de Eliminar?</h3>
+              <h3 class="text-base font-bold text-slate-900 text-center">
+                ¿Está seguro de Eliminar?
+              </h3>
               <p class="text-xs text-slate-500 text-center mt-1">
                 ¿Qué acción desea eliminar?
               </p>
 
-         
-             
-
               <div class="mt-6 flex flex-col gap-2">
-           
                 <!-- 4.1 Eliminar Definitivamente -->
                 <button
                   (click)="confirmarEliminacionFisica(item.Codigo)"
@@ -733,26 +1048,23 @@ import { FCT } from '../models/tramite.models';
                   Cancelar
                 </button>
               </div>
-
             </div>
-
           </div>
         </div>
       }
-
     </div>
-  `
+  `,
 })
 export class FctCrudComponent {
   readonly service = inject(TramitesService);
 
   // Filters State (2.1 & 2.2)
-  readonly filtroBusqueda = signal<string>('');
-  readonly filtroEmpresa = signal<string>('');
-  readonly filtroTipo = signal<string>('');
-  readonly filtroEstado = signal<string>('');
-  readonly filtroFechaDesde = signal<string>('');
-  readonly filtroFechaHasta = signal<string>('');
+  readonly filtroBusqueda = signal<string>("");
+  readonly filtroEmpresa = signal<string>("");
+  readonly filtroTipo = signal<string>("");
+  readonly filtroEstado = signal<string>("");
+  readonly filtroFechaDesde = signal<string>("");
+  readonly filtroFechaHasta = signal<string>("");
   readonly filtrosAbiertos = signal<boolean>(false);
 
   // Modals State
@@ -762,29 +1074,37 @@ export class FctCrudComponent {
 
   readonly detalleModalItem = signal<FCT | null>(null);
   readonly deleteModalItem = signal<FCT | null>(null);
-  readonly motivoInactivacionInput = signal<string>('');
+  readonly motivoInactivacionInput = signal<string>("");
 
   // Reactive Form
   readonly fctForm = new FormGroup({
-    CdgEm: new FormControl('EMP01', [Validators.required]),
-    Codigo: new FormControl('', [Validators.required, Validators.minLength(3)]),
-    CdgTpc: new FormControl('TPC-SOLICITUD', [Validators.required]),
-    CdgPCr: new FormControl('PCR-VENTANILLA', [Validators.required]),
-    CodigoPH: new FormControl('PH-ROOT-001'),
-    Tipo: new FormControl('SOLICITUD', [Validators.required]),
-    Creacion: new FormControl(new Date().toISOString().split('T')[0], [Validators.required]),
-    CdgPe: new FormControl('UNICO', [Validators.required]),
-    Desde: new FormControl('2026-01-01', [Validators.required]),
-    Hasta: new FormControl('2026-12-31', [Validators.required]),
-    Estado: new FormControl<'ACTIVO' | 'INACTIVO'>('ACTIVO'),
-    Descripcion: new FormControl('')
+    CdgEm: new FormControl("EMP01", [Validators.required]),
+    Codigo: new FormControl("", [Validators.required, Validators.minLength(3)]),
+    CdgTpc: new FormControl("TPC-SOLICITUD", [Validators.required]),
+    CdgPCr: new FormControl("PCR-VENTANILLA", [Validators.required]),
+    CodigoPH: new FormControl("PH-ROOT-001"),
+    Tipo: new FormControl("SOLICITUD", [Validators.required]),
+    Creacion: new FormControl(new Date().toISOString().split("T")[0], [
+      Validators.required,
+    ]),
+    CdgPe: new FormControl("UNICO", [Validators.required]),
+    Desde: new FormControl("2026-01-01", [Validators.required]),
+    Hasta: new FormControl("2026-12-31", [Validators.required]),
+    Estado: new FormControl<"ACTIVO" | "INACTIVO">("ACTIVO"),
+    Descripcion: new FormControl(""),
   });
 
   // KPIs
   readonly totalFCTs = computed(() => this.service.fctList().length);
-  readonly totalActivos = computed(() => this.service.fctList().filter(f => f.Estado === 'ACTIVO').length);
-  readonly totalInactivos = computed(() => this.service.fctList().filter(f => f.Estado === 'INACTIVO').length);
-  readonly totalEmpresas = computed(() => new Set(this.service.fctList().map(f => f.CdgEm)).size);
+  readonly totalActivos = computed(
+    () => this.service.fctList().filter((f) => f.Estado === "ACTIVO").length,
+  );
+  readonly totalInactivos = computed(
+    () => this.service.fctList().filter((f) => f.Estado === "INACTIVO").length,
+  );
+  readonly totalEmpresas = computed(
+    () => new Set(this.service.fctList().map((f) => f.CdgEm)).size,
+  );
 
   // Active filters count
   readonly filtrosActivosCount = computed(() => {
@@ -807,7 +1127,7 @@ export class FctCrudComponent {
     const desde = this.filtroFechaDesde();
     const hasta = this.filtroFechaHasta();
 
-    return list.filter(item => {
+    return list.filter((item) => {
       // 2.1 Búsqueda rápida
       if (query) {
         const match =
@@ -836,29 +1156,32 @@ export class FctCrudComponent {
   }
 
   toggleFiltrosAvanzados() {
-    this.filtrosAbiertos.update(v => !v);
+    this.filtrosAbiertos.update((v) => !v);
   }
 
   limpiarFiltros() {
-    this.filtroBusqueda.set('');
-    this.filtroEmpresa.set('');
-    this.filtroTipo.set('');
-    this.filtroEstado.set('');
-    this.filtroFechaDesde.set('');
-    this.filtroFechaHasta.set('');
+    this.filtroBusqueda.set("");
+    this.filtroEmpresa.set("");
+    this.filtroTipo.set("");
+    this.filtroEstado.set("");
+    this.filtroFechaDesde.set("");
+    this.filtroFechaHasta.set("");
   }
 
   getCamposCount(codigo: string): number {
-    return this.service.cftList().filter(c => c.CdgFTr === codigo).length;
+    return this.service.cftList().filter((c) => c.CdgFTr === codigo).length;
   }
 
   getCFTsForItem(codigo: string) {
-    return this.service.cftList().filter(c => c.CdgFTr === codigo).sort((a, b) => a.Secuencia - b.Secuencia);
+    return this.service
+      .cftList()
+      .filter((c) => c.CdgFTr === codigo)
+      .sort((a, b) => a.Secuencia - b.Secuencia);
   }
 
   selectAndNavigateCFT(codigo: string) {
     this.service.selectFCT(codigo);
-    this.service.activeTab.set('cft');
+    this.service.activeTab.set("cft");
   }
 
   // 1. Crear FCT
@@ -866,20 +1189,20 @@ export class FctCrudComponent {
     this.isEditing.set(false);
     this.formErrorMsg.set(null);
     this.fctForm.reset({
-      CdgEm: 'EMP01',
+      CdgEm: "EMP01",
       Codigo: `FCT-TRM-00${this.service.fctList().length + 1}`,
-      CdgTpc: 'TPC-SOLICITUD',
-      CdgPCr: 'PCR-VENTANILLA',
-      CodigoPH: 'PH-ROOT-001',
-      Tipo: 'SOLICITUD',
-      Creacion: new Date().toISOString().split('T')[0],
-      CdgPe: 'UNICO',
-      Desde: '2026-01-01',
-      Hasta: '2026-12-31',
-      Estado: 'ACTIVO',
-      Descripcion: ''
+      CdgTpc: "TPC-SOLICITUD",
+      CdgPCr: "PCR-VENTANILLA",
+      CodigoPH: "PH-ROOT-001",
+      Tipo: "SOLICITUD",
+      Creacion: new Date().toISOString().split("T")[0],
+      CdgPe: "UNICO",
+      Desde: "2026-01-01",
+      Hasta: "2026-12-31",
+      Estado: "ACTIVO",
+      Descripcion: "",
     });
-    this.fctForm.get('Codigo')?.enable();
+    this.fctForm.get("Codigo")?.enable();
     this.modalFormOpen.set(true);
   }
 
@@ -892,17 +1215,17 @@ export class FctCrudComponent {
       Codigo: item.Codigo,
       CdgTpc: item.CdgTpc,
       CdgPCr: item.CdgPCr,
-      CodigoPH: item.CodigoPH || '',
+      CodigoPH: item.CodigoPH || "",
       Tipo: item.Tipo,
       Creacion: item.Creacion,
       CdgPe: item.CdgPe,
       Desde: item.Desde,
       Hasta: item.Hasta,
       Estado: item.Estado,
-      Descripcion: item.Descripcion
+      Descripcion: item.Descripcion,
     });
     // Restricción: El código identificador único del FCT no debe ser modificable
-    this.fctForm.get('Codigo')?.disable();
+    this.fctForm.get("Codigo")?.disable();
     this.modalFormOpen.set(true);
   }
 
@@ -918,35 +1241,42 @@ export class FctCrudComponent {
     const val = this.fctForm.getRawValue();
 
     // 1.3 Validaciones
-    const desc = val.Descripcion && val.Descripcion.trim() ? val.Descripcion.trim() : (val.Codigo || 'Trámite FCT');
+    const desc =
+      val.Descripcion && val.Descripcion.trim()
+        ? val.Descripcion.trim()
+        : val.Codigo || "Trámite FCT";
 
     if (!val.Codigo || !val.Codigo.trim()) {
-      this.formErrorMsg.set('El Código del FCT es obligatorio.');
+      this.formErrorMsg.set("El Código del FCT es obligatorio.");
       return;
     }
     if (!val.Desde || !val.Hasta) {
-      this.formErrorMsg.set('Las fechas de vigencia Desde y Hasta son requeridas.');
+      this.formErrorMsg.set(
+        "Las fechas de vigencia Desde y Hasta son requeridas.",
+      );
       return;
     }
     if (new Date(val.Desde) > new Date(val.Hasta)) {
-      this.formErrorMsg.set('La fecha Desde no puede ser posterior a la fecha Hasta.');
+      this.formErrorMsg.set(
+        "La fecha Desde no puede ser posterior a la fecha Hasta.",
+      );
       return;
     }
 
     if (this.isEditing()) {
       // 3. Modificar
       const res = this.service.updateFCT(val.Codigo, {
-        CdgEm: val.CdgEm || 'EMP01',
-        CdgTpc: val.CdgTpc || '',
-        CdgPCr: val.CdgPCr || '',
-        CodigoPH: val.CodigoPH || '',
-        Tipo: val.Tipo || 'SOLICITUD',
-        Creacion: val.Creacion || '',
-        CdgPe: val.CdgPe || 'UNICO',
+        CdgEm: val.CdgEm || "EMP01",
+        CdgTpc: val.CdgTpc || "",
+        CdgPCr: val.CdgPCr || "",
+        CodigoPH: val.CodigoPH || "",
+        Tipo: val.Tipo || "SOLICITUD",
+        Creacion: val.Creacion || "",
+        CdgPe: val.CdgPe || "UNICO",
         Desde: val.Desde,
         Hasta: val.Hasta,
-        Estado: val.Estado || 'ACTIVO',
-        Descripcion: desc
+        Estado: val.Estado || "ACTIVO",
+        Descripcion: desc,
       });
 
       if (!res.success) {
@@ -956,18 +1286,18 @@ export class FctCrudComponent {
     } else {
       // 1. Crear
       const res = this.service.addFCT({
-        CdgEm: val.CdgEm || 'EMP01',
+        CdgEm: val.CdgEm || "EMP01",
         Codigo: val.Codigo.trim().toUpperCase(),
-        CdgTpc: val.CdgTpc || '',
-        CdgPCr: val.CdgPCr || '',
-        CodigoPH: val.CodigoPH || '',
-        Tipo: val.Tipo || 'SOLICITUD',
-        Creacion: val.Creacion || new Date().toISOString().split('T')[0],
-        CdgPe: val.CdgPe || 'UNICO',
+        CdgTpc: val.CdgTpc || "",
+        CdgPCr: val.CdgPCr || "",
+        CodigoPH: val.CodigoPH || "",
+        Tipo: val.Tipo || "SOLICITUD",
+        Creacion: val.Creacion || new Date().toISOString().split("T")[0],
+        CdgPe: val.CdgPe || "UNICO",
         Desde: val.Desde,
         Hasta: val.Hasta,
-        Estado: val.Estado || 'ACTIVO',
-        Descripcion: desc
+        Estado: val.Estado || "ACTIVO",
+        Descripcion: desc,
       });
 
       if (!res.success) {
@@ -987,18 +1317,20 @@ export class FctCrudComponent {
   // 4. Eliminar / Inactivar
   openDeleteModal(item: FCT) {
     this.deleteModalItem.set(item);
-    this.motivoInactivacionInput.set('Resolución administrativa por actualización de catálogo');
+    this.motivoInactivacionInput.set(
+      "Resolución administrativa por actualización de catálogo",
+    );
   }
 
   closeDeleteModal() {
     this.deleteModalItem.set(null);
-    this.motivoInactivacionInput.set('');
+    this.motivoInactivacionInput.set("");
   }
 
   confirmarInactivacion(codigo: string) {
     const motivo = this.motivoInactivacionInput().trim();
     if (!motivo) {
-      alert('Por favor especifique un motivo formal para la inactivación.');
+      alert("Por favor especifique un motivo formal para la inactivación.");
       return;
     }
     this.service.inactivateFCT(codigo, motivo);
@@ -1006,7 +1338,11 @@ export class FctCrudComponent {
   }
 
   confirmarEliminacionFisica(codigo: string) {
-    if (confirm(`¿Confirma eliminar definitivamente el trámite "${codigo}" y todos sus campos CFT configurados? Esta acción es irreversible.`)) {
+    if (
+      confirm(
+        `¿Confirma eliminar definitivamente el trámite "${codigo}" y todos sus campos CFT configurados? Esta acción es irreversible.`,
+      )
+    ) {
       this.service.deleteFCT(codigo);
       this.closeDeleteModal();
     }
